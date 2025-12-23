@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { Category } from '@/types/category';
-import { PRICE_RANGES, SIZE_OPTIONS, SORT_OPTIONS } from '@/lib/productService';
+import { PRICE_RANGES, SORT_OPTIONS } from '@/lib/productService';
 
 interface ProductFiltersProps {
   categories: Category[];
@@ -112,19 +112,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
       <div>
         <h3 className="font-semibold text-gray-900 mb-3">Sizes</h3>
         <div className="grid grid-cols-2 gap-2">
-          {SIZE_OPTIONS.map((size) => (
-            <button
-              key={size.value}
-              onClick={() => handleSizeToggle(size.value)}
-              className={`px-3 py-2 text-sm border rounded-lg transition-all duration-200 cursor-pointer ${
-                filters.sizes?.includes(size.value)
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-transparent shadow-lg hover:shadow-blue-500/25'
-                  : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500 hover:text-blue-600'
-              }`}
-            >
-              {size.label}
-            </button>
-          ))}
+      
         </div>
       </div>
 

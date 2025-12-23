@@ -154,7 +154,7 @@ const handleAddToCart = async () => {
       return null;
     }
 
-    console.log('🟢 Rendering colors, available:', availableColors.length);
+    ;
 
     return (
       <div className="space-y-2">

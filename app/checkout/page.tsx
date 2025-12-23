@@ -622,6 +622,18 @@ export default function CheckoutPage() {
           {/* Order Summary & Payment */}
           <div className="space-y-6">
             {/* Order Summary */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-sm sm:shadow-md p-4 sm:p-6 border border-blue-200">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Special Offer</h2>
+              <p className="text-gray-700 mb-4">
+                Get <span className="font-bold text-green-600">20% OFF</span> specs!
+              </p>
+              <Link
+                href="/products"
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
+              >
+                View Offers Products
+              </Link>
+            </div>
             <div className="bg-white rounded-lg shadow-sm sm:shadow-md p-4 sm:p-6 border border-gray-200">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
               

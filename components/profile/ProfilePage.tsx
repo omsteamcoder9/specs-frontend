@@ -1,28 +1,10 @@
-// app/profile/page.tsx - UPDATED WITH RECEIPT FIX
+// app/profile/page.tsx - SIMPLIFIED VERSION
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getUserOrders, getOrderById } from '@/lib/order-api';
+import { getUserOrders } from '@/lib/order-api';
 import { Order } from '@/types/order';
 import { useRouter } from 'next/navigation';
-
-// Add this helper function to get full receipt URL
-const getFullReceiptUrl = (receiptPath: string): string => {
-  if (!receiptPath) return '';
-  
-  // If it's already a full URL, return as is
-  if (receiptPath.startsWith('http')) {
-    return receiptPath;
-  }
-  
-  // If it starts with /uploads, prepend the API URL
-  if (receiptPath.startsWith('/uploads')) {
-    return `${process.env.NEXT_PUBLIC_API_URL || ''}${receiptPath}`;
-  }
-  
-  // Otherwise, assume it's a relative path
-  return `${process.env.NEXT_PUBLIC_API_URL || ''}/uploads/receipts/${receiptPath}`;
-};
 
 // Cancel order function for profile page
 const cancelOrder = async (orderId: string, token: string, cancellationReason?: string): Promise<Order> => {
@@ -54,36 +36,6 @@ const cancelOrder = async (orderId: string, token: string, cancellationReason?: 
   }
 };
 
-// Download receipt function
-const downloadReceipt = async (orderId: string, token: string) => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}/receipt/pdf`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to download receipt');
-    }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `receipt-${orderId}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-    
-    return true;
-  } catch (error) {
-    console.error('Error downloading receipt:', error);
-    return false;
-  }
-};
-
 export default function UserProfile() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeOrders, setActiveOrders] = useState<Order[]>([]);
@@ -95,7 +47,9 @@ export default function UserProfile() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showCancelledOrdersModal, setShowCancelledOrdersModal] = useState(false);
   const [cancellationReason, setCancellationReason] = useState('');
-  const [downloadingReceipt, setDownloadingReceipt] = useState<string | null>(null);
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string>('');
+  const [pdfLoading, setPdfLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -112,9 +66,7 @@ export default function UserProfile() {
           return;
         }
 
-        console.log('Fetching orders...');
         const userOrders = await getUserOrders(token);
-        console.log('Orders received:', userOrders);
         
         setOrders(userOrders);
         
@@ -127,7 +79,7 @@ export default function UserProfile() {
         
       } catch (err: any) {
         console.error('Error fetching orders:', err);
-        setError(err.message || 'Failed to load orders. Please check if the server is running.');
+        setError(err.message || 'Failed to load orders.');
       } finally {
         setLoading(false);
       }
@@ -144,9 +96,24 @@ export default function UserProfile() {
         return;
       }
       
-      console.log('Fetching order details for:', orderId);
-      const order = await getOrderById(orderId, token);
-      setSelectedOrder(order);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load order: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.order) {
+        setSelectedOrder(data.order);
+      } else {
+        throw new Error('Order data not found in response');
+      }
+      
     } catch (err: any) {
       console.error('Error fetching order details:', err);
       setError('Failed to load order details: ' + err.message);
@@ -195,8 +162,6 @@ export default function UserProfile() {
       setSelectedOrder(null);
       setCancellationReason('');
       
-      console.log('Order cancelled successfully');
-      
     } catch (err: any) {
       setError(err.message || 'Failed to cancel order');
       console.error('Error cancelling order:', err);
@@ -205,28 +170,53 @@ export default function UserProfile() {
     }
   };
 
-  const handleDownloadReceipt = async (orderId: string) => {
+  // MODIFIED: Function to open PDF in modal instead of new tab
+  const handleViewPDF = async (orderId: string) => {
     try {
+      setPdfLoading(true);
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Please log in to download receipt');
+        setError('Please log in to view receipt');
+        setPdfLoading(false);
         return;
       }
 
-      setDownloadingReceipt(orderId);
-      const success = await downloadReceipt(orderId, token);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const pdfEndpoint = `${apiUrl}/orders/${orderId}/receipt/pdf`;
       
-      if (success) {
-        console.log('Receipt downloaded successfully');
-      } else {
-        setError('Failed to download receipt');
+      // Fetch PDF as blob
+      const response = await fetch(pdfEndpoint, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch PDF');
       }
+      
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      
+      // Set the PDF URL for the iframe and show modal
+      setPdfUrl(blobUrl);
+      setShowPDFModal(true);
+      
     } catch (err: any) {
-      console.error('Error downloading receipt:', err);
-      setError(err.message || 'Failed to download receipt');
+      console.error('Error opening PDF:', err);
+      setError('Failed to load PDF. Please try again.');
     } finally {
-      setDownloadingReceipt(null);
+      setPdfLoading(false);
     }
+  };
+
+  // Clean up blob URL when modal closes
+  const closePDFModal = () => {
+    if (pdfUrl) {
+      URL.revokeObjectURL(pdfUrl);
+    }
+    setShowPDFModal(false);
+    setPdfUrl('');
   };
 
   const canCancelOrder = (order: Order): boolean => {
@@ -381,7 +371,7 @@ export default function UserProfile() {
                       className="w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 font-medium transition-colors text-left flex items-center gap-3 border border-gray-200"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                       Continue Shopping
                     </button>
@@ -468,34 +458,6 @@ export default function UserProfile() {
                               </span>
                               <span className="text-gray-400">•</span>
                               <span className="text-gray-600 capitalize">{order.paymentMethod}</span>
-                              {/* ✅ UPDATED: Receipt display with download button */}
-                              {order.receipt && (
-                                <>
-                                  <span className="text-gray-400">•</span>
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDownloadReceipt(order._id);
-                                    }}
-                                    disabled={downloadingReceipt === order._id}
-                                    className="inline-flex items-center gap-1 text-green-600 hover:text-green-700 font-medium text-sm disabled:opacity-50"
-                                  >
-                                    {downloadingReceipt === order._id ? (
-                                      <>
-                                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-green-600"></div>
-                                        Downloading...
-                                      </>
-                                    ) : (
-                                      <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Receipt
-                                      </>
-                                    )}
-                                  </button>
-                                </>
-                              )}
                             </div>
 
                             {/* Order Items Preview */}
@@ -509,22 +471,6 @@ export default function UserProfile() {
                                     <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
                                       Size: {item.selectedSize}
                                     </span>
-                                  )}
-                                  {item.selectedColor && (
-                                    <div className="flex items-center gap-1">
-                                      {item.selectedColor.code && (
-                                        <span 
-                                          className="w-3 h-3 rounded-full border border-gray-300"
-                                          style={{ backgroundColor: item.selectedColor.code }}
-                                          title={item.selectedColor.name || 'Color'}
-                                        ></span>
-                                      )}
-                                      {item.selectedColor.name && (
-                                        <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full font-medium">
-                                          {item.selectedColor.name}
-                                        </span>
-                                      )}
-                                    </div>
                                   )}
                                   <span className="text-xs text-gray-500 bg-white px-1 rounded border">
                                     x{item.quantity}
@@ -569,31 +515,29 @@ export default function UserProfile() {
                               </button>
                             )}
                             
-                            {/* Receipt Download Button */}
-                            {order.receipt && (
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleDownloadReceipt(order._id);
-                                }}
-                                disabled={downloadingReceipt === order._id}
-                                className="border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition-colors font-medium text-sm flex items-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                {downloadingReceipt === order._id ? (
-                                  <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
-                                    Downloading...
-                                  </>
-                                ) : (
-                                  <>
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Download Receipt
-                                  </>
-                                )}
-                              </button>
-                            )}
+                            {/* View PDF Button - Opens PDF in modal */}
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewPDF(order._id);
+                              }}
+                              disabled={pdfLoading}
+                              className="border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition-colors font-medium text-sm flex items-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {pdfLoading ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                                  Loading...
+                                </>
+                              ) : (
+                                <>
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                                  </svg>
+                                  View PDF
+                                </>
+                              )}
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -601,217 +545,6 @@ export default function UserProfile() {
                   </div>
                 )}
               </div>
-
-              {/* Selected Order Details */}
-              {selectedOrder && (
-                <div className="mt-8 bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                  <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                      Order Details #{selectedOrder.orderId || selectedOrder._id?.slice(-8)}
-                    </h2>
-                    <div className="flex items-center gap-3">
-                      {/* Receipt Download Button */}
-                      {selectedOrder.receipt && (
-                        <button
-                          onClick={() => handleDownloadReceipt(selectedOrder._id)}
-                          disabled={downloadingReceipt === selectedOrder._id}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm disabled:opacity-50"
-                        >
-                          {downloadingReceipt === selectedOrder._id ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                              Downloading...
-                            </>
-                          ) : (
-                            <>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                              </svg>
-                              Download Receipt
-                            </>
-                          )}
-                        </button>
-                      )}
-                      
-                      {/* Cancel Button */}
-                      {canCancelOrder(selectedOrder) && (
-                        <button 
-                          onClick={() => handleCancelOrder(selectedOrder)}
-                          disabled={cancellingOrderId === selectedOrder._id}
-                          className="border border-red-600 text-red-600 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-colors font-medium text-sm flex items-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {cancellingOrderId === selectedOrder._id ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
-                              Cancelling...
-                            </>
-                          ) : (
-                            <>
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                              Cancel Order
-                            </>
-                          )}
-                        </button>
-                      )}
-                      
-                      {/* Close Button */}
-                      <button
-                        onClick={() => setSelectedOrder(null)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-white rounded-lg"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="p-6">
-                    {/* Order Items */}
-                    <div className="mb-8">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-4">Order Items</h3>
-                      <div className="space-y-4">
-                        {selectedOrder.products?.map((item, index) => (
-                          <div key={index} className="flex items-center justify-between border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                            <div className="flex items-center space-x-4 flex-1">
-                              <div className="relative">
-                                {item.product?.image ? (
-                                  <img
-                                    src={item.product.image}
-                                    alt={item.product.name}
-                                    className="w-16 h-16 object-cover rounded-lg border border-gray-200"
-                                  />
-                                ) : (
-                                  <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-200">
-                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                  </div>
-                                )}
-                                <span className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                  {item.quantity}
-                                </span>
-                              </div>
-                              <div className="flex-1">
-                                <p className="font-medium text-gray-900">
-                                  {item.product?.name || item.name || 'Product'}
-                                </p>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <p className="text-sm text-gray-600">₹{item.price.toFixed(2)} each</p>
-                                  {item.selectedSize && (
-                                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
-                                      Size: {item.selectedSize}
-                                    </span>
-                                  )}
-                                  {item.selectedColor && (
-                                    <div className="flex items-center gap-1">
-                                      {item.selectedColor.code && (
-                                        <span 
-                                          className="w-3 h-3 rounded-full border border-gray-300"
-                                          style={{ backgroundColor: item.selectedColor.code }}
-                                          title={item.selectedColor.name || 'Color'}
-                                        ></span>
-                                      )}
-                                      {item.selectedColor.name && (
-                                        <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full font-medium">
-                                          {item.selectedColor.name}
-                                        </span>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-semibold text-blue-600">
-                                ₹{(item.price * item.quantity).toFixed(2)}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                      {/* Order Summary */}
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h3>
-                        <div className="bg-gray-50 rounded-lg p-4 space-y-3 border border-gray-200">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Subtotal</span>
-                            <span className="font-medium">₹{selectedOrder.totalAmount.toFixed(2)}</span>
-                          </div>
-                          {selectedOrder.shippingFee && selectedOrder.shippingFee > 0 && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Shipping</span>
-                              <span className="font-medium">₹{selectedOrder.shippingFee.toFixed(2)}</span>
-                            </div>
-                          )}
-                          {selectedOrder.taxAmount && selectedOrder.taxAmount > 0 && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">Tax</span>
-                              <span className="font-medium">₹{selectedOrder.taxAmount.toFixed(2)}</span>
-                            </div>
-                          )}
-                          <div className="flex justify-between text-lg font-semibold border-t border-gray-200 pt-2">
-                            <span>Total Amount</span>
-                            <span className="text-blue-600">
-                              ₹{(selectedOrder.finalAmount || selectedOrder.totalAmount).toFixed(2)}
-                            </span>
-                          </div>
-                          {/* Receipt Section */}
-                          <div className="pt-2 border-t border-gray-200">
-                            <div className="flex justify-between items-center">
-                              <span className="text-gray-600">Receipt</span>
-                              {selectedOrder.receipt ? (
-                                <button
-                                  onClick={() => handleDownloadReceipt(selectedOrder._id)}
-                                  disabled={downloadingReceipt === selectedOrder._id}
-                                  className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm disabled:opacity-50"
-                                >
-                                  {downloadingReceipt === selectedOrder._id ? (
-                                    <>
-                                      <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
-                                      Downloading...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                      </svg>
-                                      Download Receipt
-                                    </>
-                                  )}
-                                </button>
-                              ) : (
-                                <span className="text-gray-400 text-sm">Not available</span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Shipping Information */}
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Shipping Information</h3>
-                        <div className="bg-gray-50 rounded-lg p-4 space-y-2 border border-gray-200">
-                          <p className="font-medium text-gray-900">
-                            {selectedOrder.shippingAddress.firstName} {selectedOrder.shippingAddress.lastName}
-                          </p>
-                          <p className="text-gray-600">{selectedOrder.shippingAddress.email}</p>
-                          <p className="text-gray-600">{selectedOrder.shippingAddress.phone}</p>
-                          <p className="text-gray-600">{selectedOrder.shippingAddress.address}</p>
-                          <p className="text-gray-600">
-                            {selectedOrder.shippingAddress.city}, {selectedOrder.shippingAddress.state} - {selectedOrder.shippingAddress.pincode}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -868,6 +601,67 @@ export default function UserProfile() {
                     'Cancel Order'
                   )}
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PDF Modal */}
+        {showPDFModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-200">
+              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-900">Order Receipt</h3>
+                <div className="flex items-center gap-3">
+                  {/* Download Button */}
+                  <a
+                    href={pdfUrl}
+                    download={`receipt-${selectedOrder?.orderId || selectedOrder?._id?.slice(-8)}.pdf`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download
+                  </a>
+                  <button
+                    onClick={closePDFModal}
+                    className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-white rounded-lg"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex-1 overflow-hidden">
+                {pdfLoading ? (
+                  <div className="flex items-center justify-center h-96">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                      <p className="mt-4 text-gray-600">Loading PDF...</p>
+                    </div>
+                  </div>
+                ) : pdfUrl ? (
+                  <iframe
+                    src={pdfUrl}
+                    className="w-full h-full min-h-[500px]"
+                    title="Order Receipt"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-96">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Failed to load PDF</h3>
+                      <p className="text-gray-600">The receipt could not be loaded. Please try again.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -937,33 +731,19 @@ export default function UserProfile() {
                               </span>
                               <span className="text-gray-400">•</span>
                               <span className="text-gray-600 capitalize">{order.paymentMethod}</span>
-                              {order.receipt && (
-                                <>
-                                  <span className="text-gray-400">•</span>
-                                  <button 
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDownloadReceipt(order._id);
-                                    }}
-                                    disabled={downloadingReceipt === order._id}
-                                    className="inline-flex items-center gap-1 text-green-600 hover:text-green-700 font-medium text-sm disabled:opacity-50"
-                                  >
-                                    {downloadingReceipt === order._id ? (
-                                      <>
-                                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-green-600"></div>
-                                        Downloading...
-                                      </>
-                                    ) : (
-                                      <>
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Receipt
-                                      </>
-                                    )}
-                                  </button>
-                                </>
-                              )}
+                              <span className="text-gray-400">•</span>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleViewPDF(order._id);
+                                }}
+                                className="inline-flex items-center gap-1 text-green-600 hover:text-green-700 font-medium text-sm"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                                </svg>
+                                View PDF
+                              </button>
                             </div>
 
                             {/* Order Items Preview */}
@@ -977,22 +757,6 @@ export default function UserProfile() {
                                     <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
                                       Size: {item.selectedSize}
                                     </span>
-                                  )}
-                                  {item.selectedColor && (
-                                    <div className="flex items-center gap-1">
-                                      {item.selectedColor.code && (
-                                        <span 
-                                          className="w-3 h-3 rounded-full border border-gray-300"
-                                          style={{ backgroundColor: item.selectedColor.code }}
-                                          title={item.selectedColor.name || 'Color'}
-                                        ></span>
-                                      )}
-                                      {item.selectedColor.name && (
-                                        <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full font-medium">
-                                          {item.selectedColor.name}
-                                        </span>
-                                      )}
-                                    </div>
                                   )}
                                   <span className="text-xs text-gray-500 bg-white px-1 rounded border">
                                     x{item.quantity}

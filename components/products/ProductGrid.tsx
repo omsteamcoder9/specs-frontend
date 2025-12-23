@@ -202,17 +202,6 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
         }
       }
 
-      // Apply size filtering on frontend
-      if (hasSizeFilter && productsData) {
-        console.log('📏 Applying size filter on frontend:', filters.sizes);
-        productsData = productsData.filter(product => {
-          if (!product.sizes || product.sizes.length === 0) return false;
-          return product.sizes.some(sizeObj => 
-            filters.sizes.includes(sizeObj.size) && sizeObj.stock > 0
-          );
-        });
-        console.log('📏 After size filtering:', productsData.length);
-      }
 
       // APPLY LIMIT - This is the key line that limits products
       if (limit && productsData) {
