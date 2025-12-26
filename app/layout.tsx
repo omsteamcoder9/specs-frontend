@@ -10,10 +10,10 @@ import Footer from '@/components/ui/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Specs store - Sustainable Shopping',
+  title: 'BookStore',
   description: 'Your one-stop shop for eco-friendly products',
   icons: {
-    icon: '/logo.webp', // Path to your PNG favicon
+    icon: '/book.png', // Path to your PNG favicon
   },
 }
 

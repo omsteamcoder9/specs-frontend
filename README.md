@@ -40,4 +40,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 "# userpanel-frontend" 
 "# user-panel-frontend" 
 "# user-panel-frontend" 
-"# specs-frontend" 
+"# BookStore-frontend" 
+"# book-backend" 

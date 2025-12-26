@@ -38,11 +38,11 @@ export default function LoginPage() {
         <div className="max-w-md mx-auto bg-white rounded-lg shadow-md border border-gray-200 p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-900 to-amber-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
               <span className="text-white font-bold text-xl">ES</span>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-600">Sign in to your Specs store account</p>
+            <p className="text-gray-600">Sign in to your BookStore account</p>
           </div>
           
           <form onSubmit={handleLogin}>
@@ -55,7 +55,7 @@ export default function LoginPage() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200"
                 placeholder="Enter your email"
                 required
                 suppressHydrationWarning
@@ -71,7 +71,7 @@ export default function LoginPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200"
                 placeholder="Enter your password"
                 required
                 suppressHydrationWarning
@@ -90,7 +90,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-amber-900 to-amber-700 text-white py-3 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium shadow-lg hover:shadow-amber-900/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               suppressHydrationWarning
             >
               {loading ? (
@@ -107,7 +107,7 @@ export default function LoginPage() {
           <div className="mt-8 text-center">
             <p className="text-gray-600">
               Don't have an account?{' '}
-              <Link href="/signup" className="text-blue-500 hover:text-blue-600 font-semibold transition-colors duration-200">
+              <Link href="/signup" className="text-amber-700 hover:text-amber-600 font-semibold transition-colors duration-200">
                 Create an account
               </Link>
             </p>
@@ -118,7 +118,7 @@ export default function LoginPage() {
             <div className="text-center">
               <Link 
                 href="/forgot-password" 
-                className="text-sm text-gray-500 hover:text-blue-500 transition-colors duration-200"
+                className="text-sm text-gray-500 hover:text-amber-700 transition-colors duration-200"
               >
                 Forgot your password?
               </Link>

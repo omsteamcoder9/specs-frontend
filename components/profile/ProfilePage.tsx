@@ -267,7 +267,7 @@ export default function UserProfile() {
         <div className="container mx-auto px-4">
           <div className="flex justify-center items-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700 mx-auto"></div>
               <p className="mt-4 text-gray-600">Loading your orders...</p>
             </div>
           </div>
@@ -284,7 +284,7 @@ export default function UserProfile() {
             <div className="text-red-600 mb-4 font-medium">{error}</div>
             <button 
               onClick={() => window.location.reload()}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors font-medium"
+              className="bg-gradient-to-r from-amber-900 to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium"
             >
               Try Again
             </button>
@@ -315,7 +315,7 @@ export default function UserProfile() {
               <p className="text-gray-600 mb-6">Start shopping to see your orders here</p>
               <button
                 onClick={() => router.push('/products')}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors font-medium"
+                className="bg-gradient-to-r from-amber-900 to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium"
               >
                 Start Shopping
               </button>
@@ -417,7 +417,7 @@ export default function UserProfile() {
                     <p className="text-gray-600 mb-4">All your current orders are completed or cancelled</p>
                     <button
                       onClick={() => router.push('/products')}
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors font-medium"
+                      className="bg-gradient-to-r from-amber-900 to-amber-700 text-white px-6 py-2 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium"
                     >
                       Start Shopping
                     </button>
@@ -428,15 +428,15 @@ export default function UserProfile() {
                       <div
                         key={order._id}
                         className={`p-6 hover:bg-gray-50 cursor-pointer transition-all duration-200 group ${
-                          selectedOrder?._id === order._id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                          selectedOrder?._id === order._id ? 'bg-amber-50 border-l-4 border-l-amber-700' : ''
                         }`}
                         onClick={() => fetchOrderDetails(order._id)}
                       >
                         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
                           <div className="flex-1">
                             <div className="flex flex-col lg:flex-row lg:items-center gap-3 mb-3">
-                              <h3 className={`text-lg font-semibold group-hover:text-blue-600 transition-colors ${
-                                selectedOrder?._id === order._id ? 'text-blue-700' : 'text-gray-900'
+                              <h3 className={`text-lg font-semibold group-hover:text-amber-700 transition-colors ${
+                                selectedOrder?._id === order._id ? 'text-amber-800' : 'text-gray-900'
                               }`}>
                                 Order #{order.orderId || order._id?.slice(-8)}
                               </h3>
@@ -570,7 +570,7 @@ export default function UserProfile() {
                   value={cancellationReason}
                   onChange={(e) => setCancellationReason(e.target.value)}
                   placeholder="Please provide a reason for cancellation..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-transparent transition-all duration-200"
                   rows={3}
                 />
               </div>
@@ -590,7 +590,7 @@ export default function UserProfile() {
                 <button
                   onClick={confirmCancelOrder}
                   disabled={cancellingOrderId !== null}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-amber-900 to-amber-700 text-white rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                   {cancellingOrderId ? (
                     <>
@@ -617,7 +617,7 @@ export default function UserProfile() {
                   <a
                     href={pdfUrl}
                     download={`receipt-${selectedOrder?.orderId || selectedOrder?._id?.slice(-8)}.pdf`}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors font-medium text-sm"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -639,7 +639,7 @@ export default function UserProfile() {
                 {pdfLoading ? (
                   <div className="flex items-center justify-center h-96">
                     <div className="text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700 mx-auto"></div>
                       <p className="mt-4 text-gray-600">Loading PDF...</p>
                     </div>
                   </div>

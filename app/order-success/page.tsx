@@ -50,7 +50,7 @@ export default function OrderSuccessPage() {
       <div className="min-h-screen bg-white flex items-center justify-center py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center bg-white rounded-lg shadow-md p-8 border border-gray-200">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading order details...</p>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function OrderSuccessPage() {
               <p className="text-green-800 text-sm">
                 You will receive an order confirmation email shortly with all the details.
               </p>
-              <p className="text-blue-600 text-sm mt-2 font-medium">
+              <p className="text-amber-700 text-sm mt-2 font-medium">
                 Redirecting to home page in {countdown} seconds...
               </p>
             </div>
@@ -91,13 +91,13 @@ export default function OrderSuccessPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/products"
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors font-medium text-center"
+              className="bg-gradient-to-r from-amber-900 to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium text-center shadow-md hover:shadow-lg hover:shadow-amber-900/25"
             >
               Continue Shopping
             </Link>
             <Link 
               href="/"
-              className="border border-gray-900 text-gray-900 px-6 py-3 rounded-lg hover:bg-gray-900 hover:text-white transition-colors font-medium text-center"
+              className="border border-amber-900 text-amber-900 px-6 py-3 rounded-lg hover:bg-gradient-to-r hover:from-amber-900 hover:to-amber-700 hover:text-white transition-all duration-200 font-medium text-center"
             >
               Go to Home Now
             </Link>

@@ -211,7 +211,7 @@ export default function CheckoutPage() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           amount: razorpayOrder.amount,
           currency: razorpayOrder.currency || 'INR',
-          name: 'Specs store',
+          name: 'BookStore',
           description: 'Order Payment',
           image: '/logo.png',
           order_id: razorpayOrder.id,
@@ -625,14 +625,14 @@ export default function CheckoutPage() {
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-sm sm:shadow-md p-4 sm:p-6 border border-blue-200">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-3">Special Offer</h2>
               <p className="text-gray-700 mb-4">
-                Get <span className="font-bold text-green-600">20% OFF</span> specs!
+                Get <span className="font-bold text-green-600">20% OFF</span> BookStore!
               </p>
-              <Link
-                href="/products"
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2.5 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
-              >
-                View Offers Products
-              </Link>
+           <Link
+  href="/products"
+  className="w-full bg-gradient-to-r from-amber-900 to-amber-700 hover:from-amber-800 hover:to-amber-600 text-white py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center justify-center text-sm sm:text-base shadow-md hover:shadow-lg hover:shadow-amber-900/25"
+>
+  View Offers Products
+</Link>
             </div>
             <div className="bg-white rounded-lg shadow-sm sm:shadow-md p-4 sm:p-6 border border-gray-200">
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
@@ -679,7 +679,7 @@ export default function CheckoutPage() {
                 <button
                   onClick={handleRazorpayPayment}
                   disabled={paymentLoading || loading || !!authError}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg hover:shadow-blue-500/25 cursor-pointer text-sm sm:text-base"
+                  className="w-full bg-gradient-to-r from-amber-900 to-amber-700 text-white py-3 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg hover:shadow-amber-900/25 cursor-pointer text-sm sm:text-base"
                 >
                   {paymentLoading ? (
                     <div className="flex items-center">
@@ -694,11 +694,11 @@ export default function CheckoutPage() {
                 <button
                   onClick={handleCashOnDelivery}
                   disabled={loading || paymentLoading || !!authError}
-                  className="w-full border border-blue-500 text-blue-500 py-3 rounded-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center hover:shadow-lg text-sm sm:text-base"
+                  className="w-full border border-amber-700 text-amber-700 py-3 rounded-lg hover:bg-gradient-to-r hover:from-amber-900 hover:to-amber-700 hover:text-white transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center hover:shadow-lg text-sm sm:text-base"
                 >
                   {loading ? (
                     <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-blue-500 mr-2"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-amber-700 mr-2"></div>
                       Processing...
                     </div>
                   ) : (

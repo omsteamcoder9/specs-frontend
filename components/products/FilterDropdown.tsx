@@ -44,7 +44,7 @@ export default function FilterDropdown({
   const getDisplayLabel = () => {
     if (multiSelect && Array.isArray(value) && value.length > 0) {
       const selectedLabels = options
-        .filter(opt => Array.isArray(opt.value) && opt.value.some(v => value.includes(v)))
+        .filter(opt => value.includes(opt.value))
         .map(opt => opt.label);
       
       if (selectedLabels.length === 1) return selectedLabels[0];
@@ -60,19 +60,12 @@ export default function FilterDropdown({
 
   const handleSelect = (optionValue: any) => {
     if (multiSelect) {
-      // For multi-select, handle array of sizes
       const currentValues = Array.isArray(value) ? value : [];
-      
-      if (Array.isArray(optionValue)) {
-        // Toggle the specific size
-        const newValue = optionValue[0]; // Get the actual size value (e.g., 'M')
-        const newValues = currentValues.includes(newValue)
-          ? currentValues.filter(v => v !== newValue)
-          : [...currentValues, newValue];
-        onSelect(newValues);
-      }
+      const newValues = currentValues.includes(optionValue)
+        ? currentValues.filter(v => v !== optionValue)
+        : [...currentValues, optionValue];
+      onSelect(newValues);
     } else {
-      // For single select
       onSelect(optionValue);
       setIsOpen(false);
     }
@@ -92,8 +85,8 @@ export default function FilterDropdown({
           compact ? 'px-2 py-1 text-xs' : ''
         } ${
           isActive
-            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-transparent shadow-lg hover:shadow-blue-500/25'
-            : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500 hover:text-blue-600'
+            ? 'bg-gradient-to-r from-amber-700 to-amber-800 text-white border-transparent shadow-lg hover:shadow-amber-500/25'
+            : 'bg-white text-gray-700 border-gray-300 hover:border-amber-500 hover:text-amber-600'
         }`}
       >
         <span className={`max-w-[120px] truncate ${compact ? 'max-w-[80px]' : ''}`}>
@@ -115,17 +108,17 @@ export default function FilterDropdown({
         <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-60 overflow-y-auto">
           {options.map((option) => {
             const isSelected = multiSelect
-              ? Array.isArray(value) && Array.isArray(option.value) && option.value.some(v => value.includes(v))
+              ? Array.isArray(value) && value.includes(option.value)
               : value === option.value;
 
             return (
               <button
                 key={JSON.stringify(option.value)}
                 onClick={() => handleSelect(option.value)}
-                className={`w-full text-left px-4 py-2 text-sm hover:bg-blue-50 transition-all duration-200 ${
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-amber-50 transition-all duration-200 ${
                   isSelected
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
-                    : 'text-gray-700 hover:text-blue-600'
+                    ? 'bg-gradient-to-r from-amber-700 to-amber-800 text-white hover:from-amber-800 hover:to-amber-900'
+                    : 'text-gray-700 hover:text-amber-600'
                 }`}
               >
                 {option.label}

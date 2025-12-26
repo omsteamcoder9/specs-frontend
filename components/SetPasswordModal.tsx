@@ -74,7 +74,7 @@ export default function SetPasswordModal({ email, orderId, onClose, onSuccess }:
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <h2 className="text-2xl font-bold text-[#556B2F] mb-4">Create Your Account</h2>
+        <h2 className="text-2xl font-bold text-amber-900 mb-4">Create Your Account</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -99,7 +99,7 @@ export default function SetPasswordModal({ email, orderId, onClose, onSuccess }:
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#556B2F]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200"
               placeholder="Enter password (min 6 characters)"
             />
           </div>
@@ -113,7 +113,7 @@ export default function SetPasswordModal({ email, orderId, onClose, onSuccess }:
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#556B2F]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200"
               placeholder="Confirm your password"
             />
           </div>
@@ -121,8 +121,8 @@ export default function SetPasswordModal({ email, orderId, onClose, onSuccess }:
           {message && (
             <div className={`p-3 rounded-md ${
               message.includes('successfully') 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-red-100 text-red-800'
+                ? 'bg-green-100 text-green-800 border border-green-200' 
+                : 'bg-red-100 text-red-800 border border-red-200'
             }`}>
               {message}
             </div>
@@ -140,7 +140,7 @@ export default function SetPasswordModal({ email, orderId, onClose, onSuccess }:
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-[#556B2F] text-white rounded-md hover:bg-[#475826] transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-gradient-to-r from-amber-900 to-amber-700 text-white rounded-md hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium disabled:opacity-50"
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>

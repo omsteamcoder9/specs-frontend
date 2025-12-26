@@ -65,7 +65,7 @@ export default function ContactForm() {
   // Don't render form until mounted on client
   if (!isMounted) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border border-amber-100">
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded mb-6"></div>
           <div className="space-y-4">
@@ -79,8 +79,8 @@ export default function ContactForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Get In Touch</h2>
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg border border-amber-100">
+      <h2 className="text-3xl font-bold text-amber-900 mb-6 text-center">Get In Touch</h2>
       
       {message && (
         <div
@@ -107,7 +107,7 @@ export default function ContactForm() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors cursor-text"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 cursor-text"
               placeholder="Enter your full name"
             />
           </div>
@@ -122,7 +122,7 @@ export default function ContactForm() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors cursor-text"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 cursor-text"
               placeholder="Enter your email address"
             />
           </div>
@@ -138,7 +138,7 @@ export default function ContactForm() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors cursor-text"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 cursor-text"
             placeholder="Enter your phone number (optional)"
           />
         </div>
@@ -154,7 +154,7 @@ export default function ContactForm() {
             value={formData.subject}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors cursor-text"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 cursor-text"
             placeholder="What is this regarding?"
           />
         </div>
@@ -170,7 +170,7 @@ export default function ContactForm() {
             onChange={handleChange}
             required
             rows={6}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-vertical cursor-text"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 resize-vertical cursor-text"
             placeholder="Tell us how we can help you..."
           />
         </div>
@@ -178,7 +178,7 @@ export default function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full bg-gradient-to-r from-amber-900 to-amber-700 text-white py-3 px-6 rounded-lg font-semibold hover:from-amber-800 hover:to-amber-600 focus:ring-2 focus:ring-amber-700 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center">

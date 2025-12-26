@@ -4,7 +4,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { Product } from '@/types/product';
 import { Category } from '@/types/category';
-import { getFilteredFeaturedProducts, getAllProducts } from '@/lib/productService';
+import { getAllProducts } from '@/lib/productService';
 import { fetchActiveCategories } from '@/lib/categoryService';
 import ProductCard from '../ui/ProductCard';
 import SortDropdown from './SortDropdown';
@@ -27,12 +27,10 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
   const filterBarRef = useRef<HTMLDivElement>(null);
   const mobileFiltersRef = useRef<HTMLDivElement>(null);
   
-  // Filter state
+  // Filter state - removed sizes and featured
   const [filters, setFilters] = useState({
     category: category || '',
     priceRange: '',
-    sizes: [] as string[],
-    featured: false,
     sortBy: 'createdAt',
     sortOrder: 'desc' as 'asc' | 'desc',
     search: search || ''
@@ -89,7 +87,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
     loadData();
   }, []);
 
-  // Update filters when category prop changes - FIXED: Handle undefined properly
+  // Update filters when category prop changes
   useEffect(() => {
     console.log('🔄 Category prop changed:', category);
     setFilters(prev => ({
@@ -125,83 +123,54 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
       console.log('🔄 Current filters:', filters);
       console.log('📦 Loading products with category:', filters.category);
       
-      // Only use featured filtering if explicitly requested
-      const useFeaturedFiltering = filters.featured;
       const hasPriceFilter = filters.priceRange;
-      const hasSizeFilter = filters.sizes.length > 0;
       
-      if (useFeaturedFiltering) {
-        // Use featured products filtering
-        const filterParams: any = {};
-        
-        if (filters.priceRange) {
-          filterParams.priceRanges = [filters.priceRange];
-          console.log('💰 Price range filter:', filters.priceRange);
-        }
-        if (filters.category) {
-          filterParams.categories = [filters.category];
-          console.log('📂 Category filter:', filters.category);
-        }
-        
-        console.log('🚀 Sending to featured API:', filterParams);
-        
-        const response = await getFilteredFeaturedProducts({
-          ...filterParams,
-          sortBy: filters.sortBy,
-          sortOrder: filters.sortOrder
-        });
-        
-        console.log('📦 Featured API Response:', response);
-        productsData = response.data;
+      // Use basic product fetching for ALL products
+      const queryParams: any = {};
+      
+      // Only add category to query if it's not empty (meaning "All Products")
+      if (filters.category) {
+        queryParams.category = filters.category;
+        console.log('🎯 Filtering by category:', filters.category);
       } else {
-        // Use basic product fetching for ALL products
-        const queryParams: any = {};
-        
-        // Only add category to query if it's not empty (meaning "All Products")
-        if (filters.category) {
-          queryParams.category = filters.category;
-          console.log('🎯 Filtering by category:', filters.category);
-        } else {
-          console.log('🎯 Showing ALL products (no category filter)');
-        }
-        
-        if (filters.search) queryParams.search = filters.search;
-        if (filters.sortBy) queryParams.sortBy = filters.sortBy;
-        if (filters.sortOrder) queryParams.sortOrder = filters.sortOrder;
-        
-        console.log('🚀 Sending to basic API:', queryParams);
-        
-        const response = await getAllProducts(queryParams);
-        productsData = response.data;
-        
-        console.log('📦 Basic API Response count:', productsData?.length);
-
-        // Apply price filtering on frontend for basic products
-        if (hasPriceFilter && productsData) {
-          console.log('💰 Applying price filter on frontend:', filters.priceRange);
-          const filtered = productsData.filter(product => {
-            switch (filters.priceRange) {
-              case '100-200':
-                return product.price >= 100 && product.price <= 200;
-              case '200-300':
-                return product.price >= 200 && product.price <= 300;
-              case '300-400':
-                return product.price >= 300 && product.price <= 400;
-              case '400-500':
-                return product.price >= 400 && product.price <= 500;
-              case '500-600':
-                return product.price >= 500 && product.price <= 600;
-              case 'above-600':
-                return product.price > 600;
-              default:
-                return true;
-            }
-          });
-          console.log('💰 After price filtering:', filtered.length);
-          productsData = filtered;
-        }
+        console.log('🎯 Showing ALL products (no category filter)');
       }
+      
+      if (filters.search) queryParams.search = filters.search;
+      if (filters.sortBy) queryParams.sortBy = filters.sortBy;
+      if (filters.sortOrder) queryParams.sortOrder = filters.sortOrder;
+      
+      console.log('🚀 Sending to API:', queryParams);
+      
+      const response = await getAllProducts(queryParams);
+      productsData = response.data;
+      
+      console.log('📦 API Response count:', productsData?.length);
 
+      // Apply price filtering on frontend
+      if (hasPriceFilter && productsData) {
+        console.log('💰 Applying price filter on frontend:', filters.priceRange);
+        const filtered = productsData.filter(product => {
+          switch (filters.priceRange) {
+            case '100-200':
+              return product.price >= 100 && product.price <= 200;
+            case '200-300':
+              return product.price >= 200 && product.price <= 300;
+            case '300-400':
+              return product.price >= 300 && product.price <= 400;
+            case '400-500':
+              return product.price >= 400 && product.price <= 500;
+            case '500-600':
+              return product.price >= 500 && product.price <= 600;
+            case 'above-600':
+              return product.price > 600;
+            default:
+              return true;
+          }
+        });
+        console.log('💰 After price filtering:', filtered.length);
+        productsData = filtered;
+      }
 
       // APPLY LIMIT - This is the key line that limits products
       if (limit && productsData) {
@@ -235,8 +204,6 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
     setFilters({
       category: '',
       priceRange: '',
-      sizes: [],
-      featured: false,
       sortBy: 'createdAt',
       sortOrder: 'desc',
       search: ''
@@ -247,15 +214,13 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
   const activeFilterCount = hideFilters ? 0 : [
     filters.category ? 1 : 0,
     filters.priceRange ? 1 : 0,
-    filters.sizes.length > 0 ? 1 : 0,
-    filters.featured ? 1 : 0,
     filters.search ? 1 : 0
   ].reduce((a, b) => a + b, 0);
 
   if (loading && products.length === 0) {
     return (
       <div className="flex justify-center items-center py-8 sm:py-12 font-sans">
-        <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-[#556B2F]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-b-2 border-amber-700"></div>
       </div>
     );
   }
@@ -266,7 +231,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
         <p className="text-red-600 text-base sm:text-lg">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="mt-3 sm:mt-4 bg-[#556B2F] text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-[#475826] transition-colors text-sm sm:text-base font-medium"
+          className="mt-3 sm:mt-4 bg-amber-700 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-amber-800 transition-colors text-sm sm:text-base font-medium"
         >
           Try Again
         </button>
@@ -286,7 +251,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
             <div className="lg:hidden mb-4 flex gap-2">
               <button
                 onClick={() => setIsMobileFiltersOpen(true)}
-                className="flex-1 py-2 sm:py-3 bg-white text-blue-600 rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg hover:bg-gray-100 transition-colors text-sm sm:text-base"
+                className="flex-1 py-2 sm:py-3 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg hover:shadow-amber-500/25 transition-all duration-200 text-sm sm:text-base"
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
@@ -315,7 +280,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                   <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
                   <button
                     onClick={() => setIsMobileFiltersOpen(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 hover:bg-amber-50 rounded-lg transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -339,7 +304,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                             name="mobile-category"
                             checked={filters.category === option.value}
                             onChange={() => handleFiltersChange({ ...filters, category: option.value })}
-                            className="text-blue-600 focus:ring-blue-600"
+                            className="text-amber-600 focus:ring-amber-600"
                           />
                           <span className="ml-2 text-gray-700">{option.label}</span>
                         </label>
@@ -366,50 +331,12 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                             name="mobile-price"
                             checked={filters.priceRange === option.value}
                             onChange={() => handleFiltersChange({ ...filters, priceRange: option.value })}
-                            className="text-blue-600 focus:ring-blue-600"
+                            className="text-amber-600 focus:ring-amber-600"
                           />
                           <span className="ml-2 text-gray-700">{option.label}</span>
                         </label>
                       ))}
                     </div>
-                  </div>
-
-                  {/* Size Filter */}
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Size</h3>
-                    <div className="grid grid-cols-4 gap-2">
-                      {['M', 'L', 'XL', 'XXL'].map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => {
-                            const newSizes = filters.sizes.includes(size)
-                              ? filters.sizes.filter(s => s !== size)
-                              : [...filters.sizes, size];
-                            handleFiltersChange({ ...filters, sizes: newSizes });
-                          }}
-                          className={`px-3 py-2 text-sm border rounded-lg transition-colors font-medium ${
-                            filters.sizes.includes(size)
-                              ? 'bg-blue-600 text-white border-blue-600'
-                              : 'bg-white text-gray-700 border-gray-300 hover:border-blue-600'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Featured Filter */}
-                  <div>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={filters.featured}
-                        onChange={(e) => handleFiltersChange({ ...filters, featured: e.target.checked })}
-                        className="text-blue-600 focus:ring-blue-600"
-                      />
-                      <span className="ml-2 text-gray-700 font-semibold">Featured Products Only</span>
-                    </label>
                   </div>
 
                   {/* Action Buttons */}
@@ -425,7 +352,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                     </button>
                     <button
                       onClick={() => setIsMobileFiltersOpen(false)}
-                      className="flex-1 py-2 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors font-medium border border-blue-600"
+                      className="flex-1 py-2 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-lg hover:from-amber-800 hover:to-amber-900 transition-all duration-200 font-medium shadow-lg hover:shadow-amber-500/25"
                     >
                       Apply
                     </button>
@@ -447,7 +374,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
               {isSticky && (
                 <div className="hidden lg:flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold text-gray-900">
-                    {filters.featured ? 'Featured Products' : 'All Products'}
+                    All Products
                     <span className="ml-2 text-sm font-normal text-gray-500">
                       ({products.length} {products.length === 1 ? 'item' : 'items'})
                     </span>
@@ -501,32 +428,6 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                         onSelect={(value) => handleFiltersChange({ ...filters, priceRange: value })}
                       />
 
-                      {/* Size Filter */}
-                      <FilterDropdown
-                        title="Size"
-                        value={filters.sizes}
-                        options={[
-                          { value: [], label: 'All Sizes' },
-                          { value: ['M'], label: 'M' },
-                          { value: ['L'], label: 'L' },
-                          { value: ['XL'], label: 'XL' },
-                          { value: ['XXL'], label: 'XXL' }
-                        ]}
-                        multiSelect={true}
-                        onSelect={(value) => handleFiltersChange({ ...filters, sizes: value })}
-                      />
-
-                      {/* Featured Filter */}
-                      <FilterDropdown
-                        title="Featured"
-                        value={filters.featured}
-                        options={[
-                          { value: false, label: 'All' },
-                          { value: true, label: 'Featured' }
-                        ]}
-                        onSelect={(value) => handleFiltersChange({ ...filters, featured: value })}
-                      />
-
                       {/* Clear Filters Button - Hidden when sticky on desktop */}
                       {!isSticky && activeFilterCount > 0 && (
                         <button
@@ -577,11 +478,11 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                     )}
                     
                     {filters.category && (
-                      <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full whitespace-nowrap font-medium">
+                      <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full whitespace-nowrap font-medium">
                         Cat: {categories.find(c => c._id === filters.category)?.name}
                         <button 
                           onClick={() => handleFiltersChange({ ...filters, category: '' })}
-                          className="hover:text-blue-900 text-xs font-bold"
+                          className="hover:text-amber-900 text-xs font-bold"
                         >
                           ×
                         </button>
@@ -594,30 +495,6 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
                         <button 
                           onClick={() => handleFiltersChange({ ...filters, priceRange: '' })}
                           className="hover:text-green-900 text-xs font-bold"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    )}
-                    
-                    {filters.sizes.length > 0 && (
-                      <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full whitespace-nowrap font-medium">
-                        Sizes: {filters.sizes.join(', ')}
-                        <button 
-                          onClick={() => handleFiltersChange({ ...filters, sizes: [] })}
-                          className="hover:text-purple-900 text-xs font-bold"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    )}
-                    
-                    {filters.featured && (
-                      <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full whitespace-nowrap font-medium">
-                        Featured
-                        <button 
-                          onClick={() => handleFiltersChange({ ...filters, featured: false })}
-                          className="hover:text-orange-900 text-xs font-bold"
                         >
                           ×
                         </button>
@@ -645,7 +522,7 @@ export default function ProductGrid({ category, search, limit, hideFilters = fal
               </p>
               <button 
                 onClick={clearAllFilters}
-                className="bg-white text-blue-600 px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors font-medium text-sm border border-blue-600"
+                className="bg-gradient-to-r from-amber-700 to-amber-800 text-white px-6 py-2 rounded-lg font-medium hover:from-amber-800 hover:to-amber-900 transition-all duration-200 text-sm shadow-lg hover:shadow-amber-500/25"
               >
                 Clear All Filters
               </button>

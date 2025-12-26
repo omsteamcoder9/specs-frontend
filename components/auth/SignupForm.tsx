@@ -121,7 +121,7 @@ export default function SignupForm() {
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 sm:p-8 space-y-6 sm:space-y-8">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-700 mx-auto"></div>
               <p className="mt-2 text-gray-600">Loading...</p>
             </div>
           </div>
@@ -136,13 +136,13 @@ export default function SignupForm() {
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 sm:p-8 space-y-6 sm:space-y-8">
           {/* Header */}
           <div className="text-center">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-amber-900 to-amber-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
               <span className="text-white font-bold text-lg sm:text-xl">ES</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
               {isGuestUser ? 'Complete Your Account' : 'Create Your Account'}
             </h2>
-            <p className="mt-2 text-gray-600 text-lg lg :text-base">
+            <p className="mt-2 text-gray-600 text-lg lg:text-base">
               {isGuestUser ? (
                 showPasswordFields 
                   ? 'Set your password to secure your account' 
@@ -152,7 +152,7 @@ export default function SignupForm() {
                   Already have an account?{' '}
                   <Link
                     href="/login"
-                    className="font-semibold text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    className="font-semibold text-amber-700 hover:text-amber-600 transition-colors duration-200"
                   >
                     Sign in
                   </Link>
@@ -193,7 +193,7 @@ export default function SignupForm() {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+                  className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 placeholder-gray-400"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -210,7 +210,7 @@ export default function SignupForm() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 disabled:bg-gray-50 disabled:text-gray-500"
+                  className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 placeholder-gray-400 disabled:bg-gray-50 disabled:text-gray-500"
                   placeholder="Enter your email"
                   disabled={isGuestUser}
                 />
@@ -231,7 +231,7 @@ export default function SignupForm() {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+                      className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 placeholder-gray-400"
                       placeholder="Enter your password (min. 6 characters)"
                       minLength={6}
                     />
@@ -249,7 +249,7 @@ export default function SignupForm() {
                       required
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+                      className="w-full px-4 py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all duration-200 placeholder-gray-400"
                       placeholder="Confirm your password"
                       minLength={6}
                     />
@@ -263,7 +263,7 @@ export default function SignupForm() {
                 <button
                   type="button"
                   onClick={handleGuestContinue}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 sm:py-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-blue-500/25 text-sm sm:text-base"
+                  className="w-full bg-gradient-to-r from-amber-900 to-amber-700 text-white py-3 sm:py-4 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium shadow-lg hover:shadow-amber-900/25 text-sm sm:text-base"
                 >
                   Continue to Set Password
                 </button>
@@ -271,7 +271,7 @@ export default function SignupForm() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 sm:py-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium shadow-lg hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base cursor-pointer"
+                  className="w-full bg-gradient-to-r from-amber-900 to-amber-700 text-white py-3 sm:py-4 rounded-lg hover:from-amber-800 hover:to-amber-600 transition-all duration-200 font-medium shadow-lg hover:shadow-amber-900/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base cursor-pointer"
                 >
                   {isLoading ? (
                     <div className="flex items-center">
@@ -290,7 +290,7 @@ export default function SignupForm() {
                 <button
                   type="button"
                   onClick={() => setShowPasswordFields(false)}
-                  className="text-xs sm:text-sm text-blue-500 hover:text-blue-600 font-medium transition-colors duration-200"
+                  className="text-xs sm:text-sm text-amber-700 hover:text-amber-600 font-medium transition-colors duration-200"
                 >
                   ← Back to basic info
                 </button>

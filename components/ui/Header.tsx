@@ -245,7 +245,7 @@ export default function Header() {
   return (
     <>
       {/* Main Header */}
-      <header className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-md border-b border-blue-400 font-sans">
+      <header className="bg-gradient-to-r from-amber-900 to-amber-700 shadow-md border-b border-amber-800 font-sans">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo and Mobile Menu Button */}
@@ -264,16 +264,15 @@ export default function Header() {
               <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group cursor-pointer">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200 border border-white/30 overflow-hidden">
                   <Image
-                    src="/logo.webp"
-                    alt="Specs store Logo"
+                    src="/book.png"
+                    alt="BookStore Logo"
                     width={48}
                     height={48}
                     priority
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">Specs store</span>
-                 
+                  <span className="text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">BookStore</span>
                 </div>
               </Link>
             </div>
@@ -317,15 +316,15 @@ export default function Header() {
 
                 {/* Shop Dropdown Menu */}
                 {showShopDropdown && (
-                  <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-200">
-                    <div className="px-3 py-2 border-b border-gray-100">
-                      <p className="text-gray-900 font-bold text-sm">Shop Categories</p>
+                  <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-amber-200">
+                    <div className="px-3 py-2 border-b border-amber-100">
+                      <p className="text-amber-900 font-bold text-sm">Shop Categories</p>
                     </div>
                     
                     {/* Show "All Categories" if no remaining categories */}
                     {remainingCategories.length === 0 ? (
                       <div className="px-3 py-2">
-                        <p className="text-sm text-gray-500">All categories shown above</p>
+                        <p className="text-sm text-amber-500">All categories shown above</p>
                       </div>
                     ) : (
                       /* Remaining Categories (4th, 5th, etc.) */
@@ -333,10 +332,10 @@ export default function Header() {
                         <Link
                           key={category._id}
                           href={`/products?category=${category.slug}`}
-                          className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 cursor-pointer"
+                          className="flex items-center space-x-2 px-3 py-2 text-sm text-amber-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-200 cursor-pointer"
                           onClick={() => setShowShopDropdown(false)}
                         >
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                           </svg>
                           <span>{category.name}</span>
@@ -347,10 +346,10 @@ export default function Header() {
                     {/* View All Products Link */}
                     <Link
                       href="/products"
-                      className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 cursor-pointer border-t border-gray-100 mt-1"
+                      className="flex items-center space-x-2 px-3 py-2 text-sm text-amber-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-200 cursor-pointer border-t border-amber-100 mt-1"
                       onClick={() => setShowShopDropdown(false)}
                     >
-                      <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
                       <span className="font-medium">View All Products</span>
@@ -393,10 +392,10 @@ export default function Header() {
                     
                     {/* Search Container - Improved positioning */}
                     <div className="absolute top-20 xl:top-0 xl:relative w-full max-w-[90vw] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] xl:w-80 2xl:w-96 mx-auto xl:mx-0">
-                      <div className="bg-white rounded-lg shadow-xl border border-gray-200 p-2 xl:p-1.5">
+                      <div className="bg-white rounded-lg shadow-xl border border-amber-200 p-2 xl:p-1.5">
                         <form onSubmit={handleSearchSubmit} className="flex items-center gap-1.5">
-                          <div className="flex-1 flex items-center bg-gray-50 rounded-md px-3 py-1.5">
-                            <svg className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="flex-1 flex items-center bg-amber-50 rounded-md px-3 py-1.5">
+                            <svg className="w-4 h-4 text-amber-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                             <input
@@ -405,14 +404,14 @@ export default function Header() {
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
                               placeholder="Search products, categories..."
-                              className="flex-1 bg-transparent text-gray-900 focus:outline-none text-sm md:text-base placeholder-gray-500 w-full min-w-0"
+                              className="flex-1 bg-transparent text-amber-900 focus:outline-none text-sm md:text-base placeholder-amber-500 w-full min-w-0"
                               autoFocus
                             />
                             {searchQuery && (
                               <button
                                 type="button"
                                 onClick={() => setSearchQuery('')}
-                                className="ml-1 p-0.5 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200"
+                                className="ml-1 p-0.5 text-amber-400 hover:text-amber-600 rounded-full hover:bg-amber-200"
                                 aria-label="Clear search"
                               >
                                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,7 +423,7 @@ export default function Header() {
                         
                           <button
                             type="submit"
-                            className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-all duration-200 flex items-center justify-center"
+                            className="p-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-all duration-200 flex items-center justify-center"
                             aria-label="Search"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -439,7 +438,7 @@ export default function Header() {
                                 setSearchQuery('');
                                 setSearchResults([]);
                               }}
-                              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-all duration-200"
+                              className="p-2 text-amber-500 hover:text-amber-700 hover:bg-amber-100 rounded-md transition-all duration-200"
                               aria-label="Close search"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -451,23 +450,23 @@ export default function Header() {
 
                         {/* Search Results Dropdown */}
                         {(searchResults.length > 0 || isSearching) && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto">
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-amber-200 rounded-lg shadow-xl z-50 max-h-80 overflow-y-auto">
                             {isSearching ? (
-                              <div className="p-4 text-center text-gray-500">
-                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+                              <div className="p-4 text-center text-amber-500">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500 mx-auto"></div>
                                 <p className="mt-2 text-sm">Searching...</p>
                               </div>
                             ) : (
                               <>
                                 <div className="p-2">
-                                  <p className="text-xs text-gray-500 font-medium px-2 py-1">Search Results</p>
+                                  <p className="text-xs text-amber-500 font-medium px-2 py-1">Search Results</p>
                                   {searchResults.map((product) => (
                                     <div
                                       key={product._id}
-                                      className="flex items-center p-2 hover:bg-blue-50 rounded cursor-pointer transition-colors"
+                                      className="flex items-center p-2 hover:bg-amber-50 rounded cursor-pointer transition-colors"
                                       onClick={() => handleProductClick(product)}
                                     >
-                                      <div className="w-10 h-10 bg-gray-100 rounded flex-shrink-0 overflow-hidden border">
+                                      <div className="w-10 h-10 bg-amber-100 rounded flex-shrink-0 overflow-hidden border">
                                         {product.image ? (
                                           <img
                                             src={`${process.env.NEXT_PUBLIC_BASE_URL}${product.image}`}
@@ -475,28 +474,28 @@ export default function Header() {
                                             alt={product.name}
                                           />
                                         ) : (
-                                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <div className="w-full h-full bg-amber-200 flex items-center justify-center">
+                                            <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                             </svg>
                                           </div>
                                         )}
                                       </div>
                                       <div className="ml-3 flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                                        <p className="text-sm font-medium text-amber-900 truncate">{product.name}</p>
                                         <div className="flex items-center justify-between">
-                                          <p className="text-xs text-gray-500">{product.category}</p>
-                                          <p className="text-blue-600 font-medium text-sm">₹{product.price}</p>
+                                          <p className="text-xs text-amber-500">{product.category}</p>
+                                          <p className="text-amber-600 font-medium text-sm">₹{product.price}</p>
                                         </div>
                                       </div>
                                     </div>
                                   ))}
                                 </div>
                                 <div
-                                  className="border-t border-gray-100 p-3 bg-gray-50 hover:bg-blue-50 cursor-pointer text-center"
+                                  className="border-t border-amber-100 p-3 bg-amber-50 hover:bg-amber-100 cursor-pointer text-center"
                                   onClick={handleViewAllResults}
                                 >
-                                  <p className="text-sm font-medium text-blue-600 hover:text-blue-700">
+                                  <p className="text-sm font-medium text-amber-600 hover:text-amber-700">
                                     View all results for "{searchQuery}"
                                   </p>
                                 </div>
@@ -529,7 +528,7 @@ export default function Header() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-white text-blue-600 text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold shadow">
+                  <span className="absolute -top-1 -right-1 bg-white text-amber-600 text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold shadow">
                     {cartItemsCount > 9 ? '9+' : cartItemsCount}
                   </span>
                 )}
@@ -561,14 +560,14 @@ export default function Header() {
 
                     {/* Dropdown Menu */}
                     {showDropdown && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-200">
-                        <div className="px-3 py-2 border-b border-gray-100">
-                          <p className="text-gray-900 font-bold text-sm truncate">{user.name || user.email}</p>
-                          <p className="text-blue-500 text-xs">Welcome back!</p>
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-amber-200">
+                        <div className="px-3 py-2 border-b border-amber-100">
+                          <p className="text-amber-900 font-bold text-sm truncate">{user.name || user.email}</p>
+                          <p className="text-amber-500 text-xs">Welcome back!</p>
                         </div>
                         <Link
                           href="/profile"
-                          className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 cursor-pointer"
+                          className="flex items-center space-x-2 px-3 py-2 text-sm text-amber-700 hover:bg-amber-50 hover:text-amber-600 transition-all duration-200 cursor-pointer"
                           onClick={() => setShowDropdown(false)}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -578,7 +577,7 @@ export default function Header() {
                         </Link>
                         <button
                           onClick={handleLogout}
-                          className="flex items-center space-x-2 w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all duration-200 rounded-b-lg cursor-pointer"
+                          className="flex items-center space-x-2 w-full text-left px-3 py-2 text-sm text-amber-700 hover:bg-red-50 hover:text-red-600 transition-all duration-200 rounded-b-lg cursor-pointer"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -591,10 +590,9 @@ export default function Header() {
                 ) : (
                   // Login/Signup buttons - Always visible on mobile
                   <div className="flex items-center space-x-1 sm:space-x-2">
-                  
                     <Link
                       href="/signup"
-                      className="bg-white text-blue-600 px-2 py-1.5 rounded-md hover:bg-gray-100 transition-all duration-200 font-medium shadow hover:shadow-white/25 text-xs sm:text-sm whitespace-nowrap cursor-pointer min-w-[45px] sm:min-w-[50px] text-center"
+                      className="bg-white text-amber-600 px-2 py-1.5 rounded-md hover:bg-amber-50 transition-all duration-200 font-medium shadow hover:shadow-white/25 text-xs sm:text-sm whitespace-nowrap cursor-pointer min-w-[45px] sm:min-w-[50px] text-center"
                     >
                       Sign Up
                     </Link>
@@ -612,10 +610,10 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               />
               
-              <div className="absolute top-0 left-0 h-full w-64 bg-gradient-to-br from-blue-500 to-purple-600 border-r border-blue-400 shadow-2xl">
+              <div className="absolute top-0 left-0 h-full w-64 bg-gradient-to-br from-amber-900 to-amber-700 border-r border-amber-800 shadow-2xl">
                 <div className="flex flex-col h-full">
                   {/* Mobile Menu Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-blue-400">
+                  <div className="flex items-center justify-between p-4 border-b border-amber-800">
                     <Link 
                       href="/" 
                       className="flex items-center space-x-2 group cursor-pointer"
@@ -624,14 +622,14 @@ export default function Header() {
                       <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center shadow-lg border border-white/30 overflow-hidden">
                         <Image
                           src="/favicon.png"
-                          alt="Specs store Logo"
+                          alt="BookStore Logo"
                           width={32}
                           height={32}
                         />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-lg font-bold text-white">Specs store</span>
-                        <span className="text-[10px] text-white/80">SUSTAINABLE LIVING</span>
+                        <span className="text-lg font-bold text-white">BookStore</span>
+                        
                       </div>
                     </Link>
                     <button
@@ -698,7 +696,7 @@ export default function Header() {
                   </nav>
 
                   {/* Mobile Footer Actions */}
-                  <div className="p-4 border-t border-blue-400">
+                  <div className="p-4 border-t border-amber-800">
                     {user ? (
                       <div className="flex items-center space-x-3 p-2">
                         <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white font-bold text-sm">
@@ -720,7 +718,7 @@ export default function Header() {
                         </Link>
                         <Link
                           href="/signup"
-                          className="flex-1 text-center bg-white text-blue-600 py-2 rounded-lg hover:bg-gray-100 transition-all duration-200 text-sm font-medium"
+                          className="flex-1 text-center bg-white text-amber-600 py-2 rounded-lg hover:bg-amber-50 transition-all duration-200 text-sm font-medium"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
                           Sign Up
@@ -737,7 +735,7 @@ export default function Header() {
 
       {/* Bottom Navigation Footer - IMPROVED */}
       <div className={`
-        fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 border-t border-blue-400 shadow-2xl z-40
+        fixed bottom-0 left-0 right-0 bg-gradient-to-r from-amber-900 to-amber-700 border-t border-amber-800 shadow-2xl z-40
         transition-transform duration-300 ease-in-out
         ${isFooterVisible ? 'translate-y-0' : 'translate-y-full'}
         xl:hidden
@@ -789,7 +787,7 @@ export default function Header() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {cartItemsCount > 0 && (
-                <span className="absolute top-0 right-4 bg-white text-blue-600 text-[10px] rounded-full h-3 w-3 flex items-center justify-center font-bold shadow border border-blue-400">
+                <span className="absolute top-0 right-4 bg-white text-amber-600 text-[10px] rounded-full h-3 w-3 flex items-center justify-center font-bold shadow border border-amber-400">
                   {cartItemsCount > 9 ? '9+' : cartItemsCount}
                 </span>
               )}
@@ -812,10 +810,9 @@ export default function Header() {
               <div className="flex flex-col items-center justify-center flex-1 p-1 min-w-0">
                 <div className="flex flex-col items-center">
                   <div className="flex space-x-1">
-                
                     <Link
                       href="/signup"
-                      className="px-1.5 py-1 bg-white text-blue-600 text-[10px] font-medium rounded hover:bg-gray-100 transition-all duration-200 text-center cursor-pointer"
+                      className="px-1.5 py-1 bg-white text-amber-600 text-[10px] font-medium rounded hover:bg-amber-50 transition-all duration-200 text-center cursor-pointer"
                       onClick={() => setIsFooterVisible(false)}
                     >
                       Signup

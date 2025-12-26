@@ -29,7 +29,7 @@ export default function SortDropdown({ sortBy, sortOrder, onSortChange, compact 
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-blue-500 hover:text-blue-600 transition-all duration-200 cursor-pointer ${
+        className={`flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-amber-500 hover:text-amber-600 transition-all duration-200 cursor-pointer ${
           compact ? 'text-sm px-3 py-1' : ''
         }`}
       >
@@ -52,10 +52,10 @@ export default function SortDropdown({ sortBy, sortOrder, onSortChange, compact 
             <button
               key={option.value}
               onClick={() => handleSortSelect(option.value)}
-              className={`w-full text-left px-4 py-2 hover:bg-blue-50 transition-all duration-200 cursor-pointer ${
+              className={`w-full text-left px-4 py-2 hover:bg-amber-50 transition-all duration-200 cursor-pointer ${
                 option.value === `${sortBy}-${sortOrder}` 
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700' 
-                  : 'text-gray-700 hover:text-blue-600'
+                  ? 'bg-gradient-to-r from-amber-700 to-amber-800 text-white hover:from-amber-800 hover:to-amber-900' 
+                  : 'text-gray-700 hover:text-amber-600'
               }`}
             >
               {option.label}

@@ -10,7 +10,6 @@ interface ProductFiltersProps {
   filters: {
     category?: string;
     priceRange?: string;
-    sizes?: string[];
     featured?: boolean;
     sortBy?: string;
     sortOrder?: string;
@@ -28,20 +27,10 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
     });
   };
 
-  const handleSizeToggle = (size: string) => {
-    const currentSizes = filters.sizes || [];
-    const newSizes = currentSizes.includes(size)
-      ? currentSizes.filter(s => s !== size)
-      : [...currentSizes, size];
-    
-    handleFilterChange('sizes', newSizes);
-  };
-
   const clearAllFilters = () => {
     onFiltersChange({
       category: '',
       priceRange: '',
-      sizes: [],
       featured: false,
       sortBy: 'createdAt',
       sortOrder: 'desc'
@@ -60,7 +49,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
               name="category"
               checked={!filters.category}
               onChange={() => handleFilterChange('category', '')}
-              className="text-blue-500 focus:ring-blue-500"
+              className="text-amber-500 focus:ring-amber-500"
             />
             <span className="ml-2 text-gray-700">All Categories</span>
           </label>
@@ -71,7 +60,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
                 name="category"
                 checked={filters.category === category._id}
                 onChange={() => handleFilterChange('category', category._id)}
-                className="text-blue-500 focus:ring-blue-500"
+                className="text-amber-500 focus:ring-amber-500"
               />
               <span className="ml-2 text-gray-700">{category.name}</span>
             </label>
@@ -89,7 +78,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
               name="priceRange"
               checked={!filters.priceRange}
               onChange={() => handleFilterChange('priceRange', '')}
-              className="text-blue-500 focus:ring-blue-500"
+              className="text-amber-500 focus:ring-amber-500"
             />
             <span className="ml-2 text-gray-700">All Prices</span>
           </label>
@@ -100,19 +89,11 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
                 name="priceRange"
                 checked={filters.priceRange === range.value}
                 onChange={() => handleFilterChange('priceRange', range.value)}
-                className="text-blue-500 focus:ring-blue-500"
+                className="text-amber-500 focus:ring-amber-500"
               />
               <span className="ml-2 text-gray-700">{range.label}</span>
             </label>
           ))}
-        </div>
-      </div>
-
-      {/* Sizes */}
-      <div>
-        <h3 className="font-semibold text-gray-900 mb-3">Sizes</h3>
-        <div className="grid grid-cols-2 gap-2">
-      
         </div>
       </div>
 
@@ -123,7 +104,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
             type="checkbox"
             checked={filters.featured || false}
             onChange={(e) => handleFilterChange('featured', e.target.checked)}
-            className="text-blue-500 focus:ring-blue-500"
+            className="text-amber-500 focus:ring-amber-500"
           />
           <span className="ml-2 text-gray-700 font-semibold">Featured Products Only</span>
         </label>
@@ -132,7 +113,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
       {/* Clear Filters */}
       <button
         onClick={clearAllFilters}
-        className="w-full py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:border-blue-500 hover:text-blue-600 transition-all duration-200 cursor-pointer"
+        className="w-full py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:border-amber-500 hover:text-amber-600 transition-all duration-200 cursor-pointer"
       >
         Clear All Filters
       </button>
@@ -145,7 +126,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
       <div className="lg:hidden mb-4">
         <button
           onClick={() => setIsMobileFiltersOpen(true)}
-          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/25 transition-all duration-200 cursor-pointer"
+          className="w-full py-3 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg hover:shadow-amber-500/25 transition-all duration-200 cursor-pointer"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
@@ -162,7 +143,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
               <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
               <button
                 onClick={() => setIsMobileFiltersOpen(false)}
-                className="p-2 hover:bg-blue-50 rounded-lg transition-all duration-200 cursor-pointer"
+                className="p-2 hover:bg-amber-50 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -180,7 +161,7 @@ export default function ProductFilters({ categories, filters, onFiltersChange }:
           <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
           <button
             onClick={clearAllFilters}
-            className="text-sm text-blue-500 hover:text-blue-600 transition-colors duration-200 cursor-pointer"
+            className="text-sm text-amber-500 hover:text-amber-600 transition-colors duration-200 cursor-pointer"
           >
             Clear
           </button>

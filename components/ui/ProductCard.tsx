@@ -133,11 +133,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <span className="font-semibold">Quantity:</span>
-              <div className="flex items-center border border-gray-300 rounded-lg">
+              <div className="flex items-center border border-amber-300 rounded-lg">
                 <button
                   type="button"
                   onClick={() => setPopupQuantity(Math.max(1, popupQuantity - 1))}
-                  className="px-4 py-2 hover:bg-gray-100 transition-colors disabled:opacity-50 transform hover:scale-110"
+                  className="px-4 py-2 hover:bg-amber-50 transition-colors disabled:opacity-50 transform hover:scale-110"
                   disabled={popupQuantity <= 1}
                 >
                   -
@@ -146,14 +146,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                 <button
                   type="button"
                   onClick={() => setPopupQuantity(Math.min(maxQuantity, popupQuantity + 1))}
-                  className="px-4 py-2 hover:bg-gray-100 transition-colors disabled:opacity-50 transform hover:scale-110"
+                  className="px-4 py-2 hover:bg-amber-50 transition-colors disabled:opacity-50 transform hover:scale-110"
                   disabled={popupQuantity >= maxQuantity}
                 >
                   +
                 </button>
               </div>
               {maxQuantity > 0 && (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-amber-600">
                   Max: {maxQuantity}
                 </span>
               )}
@@ -167,14 +167,14 @@ export default function ProductCard({ product }: ProductCardProps) {
                 setShowQuantityPopup(false);
                 setPopupQuantity(1);
               }}
-              className="flex-1 py-3 px-4 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors transform hover:scale-105"
+              className="flex-1 py-3 px-4 border border-amber-300 text-amber-700 rounded-lg font-medium hover:bg-amber-50 transition-colors transform hover:scale-105"
             >
               Cancel
             </button>
             <button
               onClick={handlePopupAddToCart}
               disabled={isAddingThisProduct}
-              className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-all hover:from-blue-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transform hover:scale-105"
+              className="flex-1 py-3 px-4 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-all hover:from-amber-800 hover:to-amber-900 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transform hover:scale-105"
             >
               {isAddingThisProduct ? (
                 <>
@@ -204,7 +204,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       >
         {/* Cart Badge - Top Right Corner */}
         {isInCart && (
-          <div className="absolute top-2 right-2 z-10 bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md font-sans">
+          <div className="absolute top-2 right-2 z-10 bg-gradient-to-br from-amber-700 to-amber-800 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md font-sans">
             ✓
           </div>
         )}
@@ -238,7 +238,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             } hidden sm:flex`}>
               <button 
                 onClick={handleQuickView}
-                className="bg-white text-gray-900 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 text-xs sm:text-sm font-sans"
+                className="bg-white text-gray-900 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-amber-50 border border-gray-200 hover:border-amber-200 text-xs sm:text-sm font-sans"
               >
                 <Eye size={14} className="sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Quick View</span>
@@ -294,7 +294,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button 
             onClick={handleAddToCart}
             disabled={isOutOfStock || isAddingThisProduct}
-            className="w-full py-2 px-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-500/25 text-xs xs:text-sm sm:text-sm font-sans transform hover:scale-105"
+            className="w-full py-2 px-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 bg-gradient-to-r from-amber-700 to-amber-800 text-white hover:from-amber-800 hover:to-amber-900 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed shadow-lg hover:shadow-amber-500/25 text-xs xs:text-sm sm:text-sm font-sans transform hover:scale-105"
           >
             {isAddingThisProduct ? (
               <>

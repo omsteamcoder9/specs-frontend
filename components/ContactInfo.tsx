@@ -7,7 +7,7 @@ export default function ContactInfo() {
         </svg>
       ),
       title: 'Email',
-      details: 'contact@yourcompany.com',
+      details: 'support@bookstore.com',
       description: 'Send us an email anytime'
     },
     {
@@ -17,7 +17,7 @@ export default function ContactInfo() {
         </svg>
       ),
       title: 'Phone',
-      details: '+91 8765435656',
+      details: '+91 9876543210',
       description: 'Mon-Fri from 9am to 6pm'
     },
     {
@@ -28,49 +28,62 @@ export default function ContactInfo() {
         </svg>
       ),
       title: 'Office',
-      details: '123 Business Ave',
-      description: 'Suite 100, New York, NY 10001'
+      details: '123 Book Street',
+      description: 'Reading Corner, Bookville 10001'
     }
   ];
 
   return (
-    <div className="bg-gray-50 rounded-lg p-8">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">Contact Information</h3>
-      <p className="text-gray-600 mb-8">
-        We're here to help and answer any questions you might have. We look forward to hearing from you.
+    <div className="bg-gradient-to-br from-amber-50 to-amber-100/30 rounded-lg p-8 border border-amber-200">
+      <h3 className="text-2xl font-bold text-amber-900 mb-6">Contact Information</h3>
+      <p className="text-amber-800/80 mb-8">
+        We're here to help and answer any questions you might have about our books, orders, or services. We look forward to hearing from you.
       </p>
       
       <div className="space-y-6">
         {contactMethods.map((method, index) => (
-          <div key={index} className="flex items-start space-x-4">
-            <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+          <div 
+            key={index} 
+            className="flex items-start space-x-4 p-4 bg-white rounded-lg border border-amber-100 hover:border-amber-300 transition-colors duration-200"
+          >
+            <div className="flex-shrink-0 w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center text-amber-700">
               {method.icon}
             </div>
             <div>
-              <h4 className="font-semibold text-gray-800">{method.title}</h4>
-              <p className="text-gray-700 font-medium">{method.details}</p>
-              <p className="text-gray-500 text-sm">{method.description}</p>
+              <h4 className="font-semibold text-amber-900">{method.title}</h4>
+              <p className="text-amber-800 font-medium">{method.details}</p>
+              <p className="text-amber-700/80 text-sm">{method.description}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-8 pt-8 border-t border-gray-200">
-        <h4 className="font-semibold text-gray-800 mb-4">Business Hours</h4>
-        <div className="space-y-2 text-gray-600">
-          <div className="flex justify-between">
+      <div className="mt-8 pt-8 border-t border-amber-200">
+        <h4 className="font-semibold text-amber-900 mb-4">Business Hours</h4>
+        <div className="space-y-3 text-amber-800/80">
+          <div className="flex justify-between items-center p-2 hover:bg-amber-50 rounded-lg transition-colors">
             <span>Monday - Friday</span>
-            <span>9:00 AM - 6:00 PM</span>
+            <span className="font-medium">9:00 AM - 6:00 PM</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center p-2 hover:bg-amber-50 rounded-lg transition-colors">
             <span>Saturday</span>
-            <span>10:00 AM - 4:00 PM</span>
+            <span className="font-medium">10:00 AM - 4:00 PM</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center p-2 hover:bg-amber-50 rounded-lg transition-colors">
             <span>Sunday</span>
-            <span>Closed</span>
+            <span className="font-medium text-red-500">Closed</span>
           </div>
         </div>
+      </div>
+
+      <div className="mt-8 pt-8 border-t border-amber-200">
+        <h4 className="font-semibold text-amber-900 mb-4">Visit Our Store</h4>
+        <p className="text-amber-800/80 mb-2">
+          Come browse our physical collection at our flagship store in Bookville.
+        </p>
+        <p className="text-sm text-amber-700/70">
+          Free parking available • Wheelchair accessible • Book reading events every Saturday
+        </p>
       </div>
     </div>
   );

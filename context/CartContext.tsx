@@ -1,4 +1,4 @@
-
+// CartContext.tsx - Fix the isGuest logic
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -12,7 +12,7 @@ interface CartContextType {
   loading: boolean;
   addingProductId: string | null;
   isGuest: boolean;
-  addToCart: (product: Product, quantity: number, color?: string) => Promise<void>; // ✅ FIXED: Changed from size to color
+  addToCart: (product: Product, quantity: number) => Promise<void>;
   updateCartItem: (itemId: string, quantity: number) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
@@ -47,36 +47,41 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cart, setCart] = useState<Cart>(initialCart);
   const [loading, setLoading] = useState(false);
   const [addingProductId, setAddingProductId] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
-  // Determine if user is guest (not authenticated)
+  // ✅ FIX: Properly determine if user is guest (check both user and token)
   const isGuest = !user;
+
+  console.log('🛒 CartProvider state:', { 
+    user: user ? 'authenticated' : 'guest', 
+    isGuest, 
+    authLoading 
+  });
 
   // Load guest cart from localStorage on initial load
   useEffect(() => {
-    if (isGuest) {
+    if (isGuest && !authLoading) {
+      console.log('🛒 Loading guest cart on mount');
       loadGuestCart();
     }
-  }, []);
+  }, [isGuest, authLoading]);
 
   const loadGuestCart = () => {
     try {
       const savedCart = localStorage.getItem('guestCart');
       if (savedCart) {
         const parsedCart = JSON.parse(savedCart);
-        // ✅ Ensure items array exists
         if (!parsedCart.items) {
           parsedCart.items = [];
         }
         setCart(parsedCart);
-        console.log('🛒 Loaded guest cart:', parsedCart);
+        console.log('🛒 Loaded guest cart from localStorage:', parsedCart);
       } else {
-        // ✅ Initialize with empty cart if nothing in localStorage
         setCart(initialCart);
+        console.log('🛒 No saved guest cart, using initial cart');
       }
     } catch (error) {
       console.error('Error loading guest cart:', error);
-      // ✅ Fallback to initial cart on error
       setCart(initialCart);
     }
   };
@@ -84,75 +89,77 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const saveGuestCart = (guestCart: Cart) => {
     try {
       localStorage.setItem('guestCart', JSON.stringify(guestCart));
-      console.log('🛒 Saved guest cart:', guestCart);
+      console.log('🛒 Saved guest cart to localStorage:', guestCart);
     } catch (error) {
       console.error('Error saving guest cart:', error);
     }
   };
 
   const refreshCart = async () => {
+    console.log('🔄 refreshCart called, isGuest:', isGuest, 'authLoading:', authLoading);
+    
+    if (authLoading) {
+      console.log('🔄 Waiting for auth to finish loading');
+      return;
+    }
+
     try {
-      if (user) {
-        // Authenticated user - fetch from API
+      if (!isGuest && user) {
+        // ✅ User is authenticated - fetch from API
+        console.log('🔄 Fetching user cart via API');
         const cartData = await cartAPI.getCart();
         setCart(cartData);
-        console.log('🛒 Loaded user cart:', cartData);
+        console.log('🛒 Loaded user cart from API:', cartData);
       } else {
-        // Guest user - load from localStorage
+        // ✅ User is guest - load from localStorage
+        console.log('🔄 Loading guest cart (user is guest)');
         loadGuestCart();
       }
     } catch (error) {
       console.error('Error fetching cart:', error);
       if (isGuest) {
-        loadGuestCart(); // Fallback to guest cart
-      } else {
-        setCart(initialCart);
+        console.log('🔄 Falling back to guest cart due to error');
+        loadGuestCart();
       }
     }
   };
 
+  // Refresh cart when auth state changes
   useEffect(() => {
+    console.log('🔄 Auth state changed, refreshing cart');
     refreshCart();
-  }, [user]);
+  }, [user, authLoading]);
 
-  // ✅ FIXED: Guest cart functions with proper item matching and safe array access
-  const handleGuestAddToCart = (product: Product, quantity: number, color?: string): Cart => { // ✅ FIXED: Changed from size to color
-    // ✅ FIXED: Ensure cart.items always exists
+  // ✅ FIXED: Guest cart functions
+  const handleGuestAddToCart = (product: Product, quantity: number): Cart => {
+    console.log('🛒 handleGuestAddToCart called for product:', product._id);
+    
     const guestCart = { 
       ...cart,
-      items: cart.items ? [...cart.items] : [] // Ensure items array exists
+      items: cart.items ? [...cart.items] : []
     };
     
-    console.log('🛒 Guest cart before add:', guestCart);
-    
-    // ✅ FIXED: Changed from size to color
-    const itemUniqueId = `${product._id}-${color || 'nocolor'}`;
-    
-    // ✅ FIXED: Safe findIndex with fallback
     const existingItemIndex = guestCart.items.findIndex(
-      item => item && item.product && item.product._id === product._id && item.selectedColor === color // ✅ FIXED: Changed from selectedSize to selectedColor
+      item => item && item.product && item.product._id === product._id
     );
     
     if (existingItemIndex > -1) {
-      // ✅ Update quantity of existing item
       guestCart.items[existingItemIndex].quantity += quantity;
       guestCart.items[existingItemIndex].updatedAt = new Date().toISOString();
-      console.log('🛒 Updated existing item quantity:', guestCart.items[existingItemIndex]);
+      console.log('🛒 Updated existing item');
     } else {
-      // ✅ Create new item with consistent ID
-      const guestItemId = `guest-${itemUniqueId}`;
+      const guestItemId = `guest-${product._id}-${Date.now()}`;
       
       const newItem: CartItem = {
         _id: guestItemId,
         product,
         quantity,
-        price: product.price, // ✅ ADDED: Include price from product
-        selectedColor: color, // ✅ FIXED: Changed from selectedSize to selectedColor
+        price: product.price,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
       guestCart.items.push(newItem);
-      console.log('🛒 Added new item:', newItem);
+      console.log('🛒 Added new item');
     }
     
     // Recalculate totals
@@ -163,7 +170,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     // Save to localStorage
     saveGuestCart(guestCart);
     
-    console.log('🛒 Cart after add - Total items:', guestCart.totalItems, 'Items:', guestCart.items);
     return guestCart;
   };
 
@@ -176,20 +182,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     
     if (itemIndex > -1) {
       if (quantity <= 0) {
-        // Remove item if quantity is 0 or less
         guestCart.items.splice(itemIndex, 1);
       } else {
-        // Update quantity
         guestCart.items[itemIndex].quantity = quantity;
         guestCart.items[itemIndex].updatedAt = new Date().toISOString();
       }
       
-      // Recalculate totals
       guestCart.totalItems = guestCart.items.reduce((sum, item) => sum + item.quantity, 0);
       guestCart.totalPrice = guestCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
       guestCart.updatedAt = new Date().toISOString();
       
-      // Save to localStorage
       saveGuestCart(guestCart);
     }
     
@@ -203,12 +205,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     };
     guestCart.items = guestCart.items.filter(item => item._id !== itemId);
     
-    // Recalculate totals
     guestCart.totalItems = guestCart.items.reduce((sum, item) => sum + item.quantity, 0);
     guestCart.totalPrice = guestCart.items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
     guestCart.updatedAt = new Date().toISOString();
     
-    // Save to localStorage
     saveGuestCart(guestCart);
     
     return guestCart;
@@ -221,26 +221,28 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     return emptyCart;
   };
 
-  // ✅ FIXED: addToCart with proper state updates and parameter name
-  const addToCart = async (product: Product, quantity: number, color?: string) => { // ✅ FIXED: Changed from size to color
+  // ✅ FIXED: addToCart function with proper guest detection
+  const addToCart = async (product: Product, quantity: number) => {
+    console.log('🛒 addToCart called, isGuest:', isGuest);
+    
     try {
       setAddingProductId(product._id);
       setLoading(true);
       
       if (isGuest) {
-        const updatedCart = handleGuestAddToCart(product, quantity, color); // ✅ FIXED: Changed from size to color
+        console.log('🛒 Using guest cart handler');
+        const updatedCart = handleGuestAddToCart(product, quantity);
         setCart(updatedCart);
       } else {
-        // ✅ FIXED: Changed size to color in API call
+        console.log('🛒 Using API cart handler');
         const updatedCart = await cartAPI.addToCart({
           productId: product._id,
-          quantity,
-          color // ✅ FIXED: Changed from size to color
+          quantity
         });
         setCart(updatedCart);
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('❌ Error in addToCart:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -256,7 +258,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         setCart(handleGuestUpdateCartItem(itemId, quantity));
       } else {
         await cartAPI.updateCartItem(itemId, { quantity });
-        // ✅ Refresh from API
         const updatedCart = await cartAPI.getCart();
         setCart(updatedCart);
       }
@@ -276,7 +277,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         setCart(handleGuestRemoveFromCart(itemId));
       } else {
         await cartAPI.removeFromCart(itemId);
-        // ✅ Refresh from API
         const updatedCart = await cartAPI.getCart();
         setCart(updatedCart);
       }

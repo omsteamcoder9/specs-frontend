@@ -30,7 +30,7 @@ export default function CartPage() {
             <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Add some products to your cart to see them here.</p>
             <Link 
               href="/products"
-              className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium text-sm sm:text-base shadow-lg hover:shadow-blue-500/25"
+              className="inline-block bg-gradient-to-r from-amber-700 to-amber-800 text-white px-6 py-3 rounded-lg hover:from-amber-800 hover:to-amber-900 transition-all duration-200 font-medium text-sm sm:text-base shadow-lg hover:shadow-amber-500/25"
             >
               Continue Shopping
             </Link>
@@ -46,10 +46,10 @@ export default function CartPage() {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Shopping Cart</h1>
           {isGuest && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm">
+            <div className="bg-amber-50 border border-amber-200 text-amber-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm">
               <p>
                 🛒 Shopping as Guest •{' '}
-                <Link href="/signup" className="font-semibold underline hover:text-blue-800 transition-colors duration-200">
+                <Link href="/signup" className="font-semibold underline hover:text-amber-800 transition-colors duration-200">
                   Sign up to save your cart
                 </Link>
               </p>
@@ -113,7 +113,7 @@ export default function CartPage() {
                         <button 
                           onClick={() => updateCartItem(item._id, item.quantity - 1)}
                           disabled={item.quantity <= 1}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all duration-200 cursor-pointer"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-amber-300 flex items-center justify-center hover:bg-amber-50 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all duration-200 cursor-pointer"
                         >
                           -
                         </button>
@@ -121,7 +121,7 @@ export default function CartPage() {
                         <button 
                           onClick={() => updateCartItem(item._id, item.quantity + 1)}
                           disabled={item.quantity >= item.product.stock}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-blue-50 hover:border-blue-500 hover:text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all duration-200 cursor-pointer"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-amber-300 flex items-center justify-center hover:bg-amber-50 hover:border-amber-500 hover:text-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all duration-200 cursor-pointer"
                         >
                           +
                         </button>
@@ -175,13 +175,13 @@ export default function CartPage() {
                 </div>
                 <div className="border-t pt-2 sm:pt-3 flex justify-between text-base sm:text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-blue-600">₹{total.toFixed(2)}</span>
+                  <span className="text-amber-600">₹{total.toFixed(2)}</span>
                 </div>
               </div>
 
               <button 
                 onClick={handleCheckout}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium mb-3 sm:mb-4 text-sm sm:text-base shadow-lg hover:shadow-blue-500/25 cursor-pointer"
+                className="w-full bg-gradient-to-r from-amber-700 to-amber-800 text-white py-3 rounded-lg hover:from-amber-800 hover:to-amber-900 transition-all duration-200 font-medium mb-3 sm:mb-4 text-sm sm:text-base shadow-lg hover:shadow-amber-500/25 cursor-pointer"
               >
                 Proceed to Checkout
               </button>
@@ -192,13 +192,13 @@ export default function CartPage() {
                   <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
                     <Link 
                       href="/login"
-                      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 font-medium text-center text-xs sm:text-sm shadow-lg hover:shadow-blue-500/25"
+                      className="bg-gradient-to-r from-amber-700 to-amber-800 text-white py-2 px-4 rounded-lg hover:from-amber-800 hover:to-amber-900 transition-all duration-200 font-medium text-center text-xs sm:text-sm shadow-lg hover:shadow-amber-500/25"
                     >
                       Login
                     </Link>
                     <Link 
                       href="/signup"
-                      className="border border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-200 font-medium text-center text-xs sm:text-sm"
+                      className="border border-amber-600 text-amber-600 py-2 px-4 rounded-lg hover:bg-gradient-to-r hover:from-amber-700 hover:to-amber-800 hover:text-white transition-all duration-200 font-medium text-center text-xs sm:text-sm"
                     >
                       Sign Up
                     </Link>
@@ -208,7 +208,7 @@ export default function CartPage() {
               
               <Link 
                 href="/products"
-                className="w-full border border-blue-500 text-blue-500 py-3 rounded-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-200 font-medium text-center block text-sm sm:text-base"
+                className="w-full border border-amber-600 text-amber-600 py-3 rounded-lg hover:bg-gradient-to-r hover:from-amber-700 hover:to-amber-800 hover:text-white transition-all duration-200 font-medium text-center block text-sm sm:text-base"
               >
                 Continue Shopping
               </Link>
@@ -219,19 +219,3 @@ export default function CartPage() {
     </div>
   );
 }
-
-// Helper function to get product image URL
-// function getProductImageUrl(product: any): string {
-//   if (!product.images || product.images.length === 0) {
-//     return `${process.env.NEXT_PUBLIC_IMG_URL}`;
-//   }
-
-//   const imagePath = product.images[0].image;
-  
-//   if (imagePath.startsWith('http')) {
-//     return imagePath;
-//   }
-  
-//   const baseUrl = process.env.NEXT_PUBLIC_IMG_URL;
-//   return `${baseUrl}${imagePath}`;
-// }

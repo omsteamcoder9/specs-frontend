@@ -18,8 +18,8 @@ export default function CategoryFilter({ categories, selectedCategory }: Categor
           href="/products"
           className={`px-4 py-2 rounded-full font-medium transition-all duration-300 cursor-pointer ${
             !selectedCategory
-              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25'
-              : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md border border-gray-300'
+              ? 'bg-gradient-to-r from-amber-700 to-amber-800 text-white shadow-lg hover:shadow-amber-500/25'
+              : 'bg-white text-gray-700 hover:bg-amber-50 hover:text-amber-600 hover:shadow-md border border-gray-300'
           }`}
         >
           All Products
@@ -31,8 +31,8 @@ export default function CategoryFilter({ categories, selectedCategory }: Categor
             href={`/products?category=${category._id}`}
             className={`px-4 py-2 rounded-full font-medium transition-all duration-300 cursor-pointer ${
               selectedCategory === category._id
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-blue-500/25'
-                : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 hover:shadow-md border border-gray-300'
+                ? 'bg-gradient-to-r from-amber-700 to-amber-800 text-white shadow-lg hover:shadow-amber-500/25'
+                : 'bg-white text-gray-700 hover:bg-amber-50 hover:text-amber-600 hover:shadow-md border border-gray-300'
             }`}
           >
             {category.name}

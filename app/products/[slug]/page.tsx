@@ -5,7 +5,7 @@ import { notFound, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AddToCartButton from '@/components/products/AddToCartButton';
 import ProductCard from '@/components/ui/ProductCard';
-import { Product, ProductColor } from '@/types/product';
+import { Product } from '@/types/product';
 import { useEffect, useState, useCallback } from 'react';
 import { useCart } from '@/context/CartContext';
 
@@ -13,61 +13,15 @@ interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Ultra Compact Color Circle
-const ColorCircle = ({ 
-  colorItem, 
-  isSelected, 
-  onClick 
-}: { 
-  colorItem: ProductColor; 
-  isSelected: boolean; 
-  onClick: () => void;
-}) => {
-  const colors = colorItem.code ? colorItem.code.split(',').map(c => c.trim()) : ['#f0f0f0'];
-  
-  return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center p-0.5 ${isSelected ? 'ring-1 ring-[#556B2F] rounded-md' : ''}`}
-    >
-      <div className="relative">
-        <div className="w-7 h-7 rounded-full overflow-hidden border border-gray-200">
-          {colors.length === 1 ? (
-            <div className="w-full h-full" style={{ backgroundColor: colors[0] }} />
-          ) : (
-            <div className="w-full h-full flex">
-              {colors.map((color, i) => (
-                <div key={i} className="flex-1" style={{ backgroundColor: color }} />
-              ))}
-            </div>
-          )}
-        </div>
-        {isSelected && (
-          <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#556B2F] rounded-full flex items-center justify-center">
-            <svg className="w-1.5 h-1.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-        )}
-      </div>
-      <div className={`text-[8px] mt-0.5 px-1 py-0.5 rounded ${colorItem.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-        {colorItem.stock > 0 ? colorItem.stock : '0'}
-      </div>
-    </button>
-  );
-};
-
 // Mobile Floating Button Component
 interface MobileFloatingButtonProps {
   product: Product;
-  selectedColor: ProductColor | null;
   isVisible: boolean;
   onAddToCart: (quantity: number) => Promise<void>;
 }
 
 const MobileFloatingButton = ({ 
   product, 
-  selectedColor, 
   isVisible, 
   onAddToCart 
 }: MobileFloatingButtonProps) => {
@@ -77,7 +31,7 @@ const MobileFloatingButton = ({
   const [showAddedMessage, setShowAddedMessage] = useState(false);
   const [quantity, setQuantity] = useState(1);
   
-  const isOutOfStock = selectedColor ? selectedColor.stock <= 0 : product.stock <= 0;
+  const isOutOfStock = product.stock <= 0;
   
   const handleCartClick = async () => {
     if (isOutOfStock) return;
@@ -119,24 +73,24 @@ const MobileFloatingButton = ({
     `}>
       <div className="bg-white border-t border-gray-200">
         {/* QUANTITY ROW - COMPACT */}
-        <div className="flex items-center justify-between px-3 py-1.5 bg-gray-50 border-b border-gray-200">
-          <span className="text-xs font-medium text-gray-700">Quantity:</span>
+        <div className="flex items-center justify-between px-3 py-1.5 bg-amber-50 border-b border-amber-100">
+          <span className="text-xs font-medium text-amber-800">Quantity:</span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
               disabled={quantity <= 1}
-              className="w-6 h-6 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 disabled:opacity-40"
+              className="w-6 h-6 flex items-center justify-center bg-white border border-amber-300 rounded-md text-amber-800 disabled:opacity-40 hover:bg-amber-50"
             >
               -
             </button>
-            <span className="text-sm font-medium w-6 text-center">{quantity}</span>
+            <span className="text-sm font-medium w-6 text-center text-amber-900">{quantity}</span>
             <button
               onClick={() => {
-                const maxStock = selectedColor?.stock || product.stock || 99;
+                const maxStock = product.stock || 99;
                 setQuantity(prev => Math.min(maxStock, prev + 1))
               }}
-              disabled={isOutOfStock || quantity >= (selectedColor?.stock || product.stock || 99)}
-              className="w-6 h-6 flex items-center justify-center bg-white border border-gray-300 rounded-md text-gray-700 disabled:opacity-40"
+              disabled={isOutOfStock || quantity >= (product.stock || 99)}
+              className="w-6 h-6 flex items-center justify-center bg-white border border-amber-300 rounded-md text-amber-800 disabled:opacity-40 hover:bg-amber-50"
             >
               +
             </button>
@@ -156,7 +110,7 @@ const MobileFloatingButton = ({
               relative
               ${isOutOfStock || addingToCart
                 ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 hover:shadow-md shadow cursor-pointer'
+                : 'bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 hover:shadow-md shadow cursor-pointer'
               }
             `}
           >
@@ -184,7 +138,7 @@ const MobileFloatingButton = ({
               transition-colors duration-200
               ${isOutOfStock || addingToBuy
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                : 'bg-black text-white hover:bg-gray-800'
+                : 'bg-amber-900 text-white hover:bg-amber-800'
               }
             `}
           >
@@ -209,7 +163,6 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
   const [product, setProduct] = useState<Product | null>(null);
   const [randomProducts, setRandomProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedColor, setSelectedColor] = useState<ProductColor | null>(null);
   const [showFloatingButton, setShowFloatingButton] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -267,12 +220,6 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
         
         const productData = response.data;
         setProduct(productData);
-        
-        if (productData.colors && Array.isArray(productData.colors) && productData.colors.length > 0 && productData.colors[0]?.name) {
-          setSelectedColor(productData.colors[0]);
-        } else {
-          setSelectedColor(null);
-        }
 
         const randomProductsData = await getRandomProducts(productData._id, 4);
         setRandomProducts(randomProductsData);
@@ -293,8 +240,7 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
     }
     
     try {
-      const colorName = selectedColor?.name;
-      await addToCart(product, quantity, colorName);
+      await addToCart(product, quantity);
       return;
     } catch (error) {
       console.error('❌ Mobile - Error adding to cart:', error);
@@ -305,7 +251,7 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-white py-8 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#556B2F]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
       </div>
     );
   }
@@ -314,33 +260,50 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
     notFound();
   }
 
-  const getStockDisplay = () => {
-    if (selectedColor) {
-      return selectedColor.stock;
+  const stock = product.stock || 0;
+
+  // Group specifications by category for better display
+  const groupedSpecifications = () => {
+    if (!product.specifications || !Array.isArray(product.specifications)) {
+      return [];
     }
-    if (product.colors && Array.isArray(product.colors)) {
-      const validColors = product.colors.filter(color => color && color.name && color.name.trim() !== '');
-      if (validColors.length > 0) {
-        return validColors.reduce((sum, color) => sum + color.stock, 0);
+
+    const groups: { [key: string]: Array<{ key: string; value: string }> } = {};
+    
+    product.specifications.forEach(spec => {
+      // Determine category based on key
+      let category = 'General';
+      
+      if (spec.key.toLowerCase().includes('author') || 
+          spec.key.toLowerCase().includes('isbn') || 
+          spec.key.toLowerCase().includes('publisher') ||
+          spec.key.toLowerCase().includes('pages')) {
+        category = 'Book Details';
+      } else if (spec.key.toLowerCase().includes('brand') || 
+                spec.key.toLowerCase().includes('model') ||
+                spec.key.toLowerCase().includes('processor') ||
+                spec.key.toLowerCase().includes('ram')) {
+        category = 'Technical Specifications';
+      } else if (spec.key.toLowerCase().includes('material') || 
+                spec.key.toLowerCase().includes('size') ||
+                spec.key.toLowerCase().includes('color') ||
+                spec.key.toLowerCase().includes('fit')) {
+        category = 'Product Details';
+      } else if (spec.key.toLowerCase().includes('weight') || 
+                spec.key.toLowerCase().includes('dimensions')) {
+        category = 'Physical Specifications';
       }
-    }
-    return product.stock || 0;
+      
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(spec);
+    });
+    
+    return Object.entries(groups);
   };
 
-  const hasValidColors = () => {
-    if (!product.colors || !Array.isArray(product.colors)) return false;
-    const validColors = product.colors.filter(color => color && color.name && color.name.trim() !== '');
-    return validColors.length > 0;
-  };
-
-  const getValidColors = () => {
-    if (!product.colors || !Array.isArray(product.colors)) return [];
-    return product.colors.filter(color => color && color.name && color.name.trim() !== '');
-  };
-
-  const validColors = getValidColors();
-  const productHasColors = hasValidColors();
-  const stock = getStockDisplay();
+  const specGroups = groupedSpecifications();
 
   return (
     <div className="min-h-screen bg-white pb-16 lg:pb-0">
@@ -348,16 +311,16 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
         {/* Product Section - ULTRA COMPACT */}
         <div className="bg-white">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-4">
-            {/* Product Images - NO EXTRA SPACE */}
+            {/* Product Images - FULL HEIGHT */}
             <div className="w-full">
-              <div className="relative w-full overflow-hidden rounded-lg mt-2">
-                <div className="relative w-full" style={{ height: '45vh', minHeight: '300px' }}>
+              <div className="relative w-full overflow-hidden rounded-lg mt-5">
+                <div className="relative w-full h-auto min-h-[400px] lg:min-h-[500px]">
                   {product.images && product.images.length > 0 && product.images[0]?.image ? (
                     <Image
                       src={`${process.env.NEXT_PUBLIC_BASE_URL}${product.images[0].image}`}
                       alt={product.name}
                       fill
-                      className="object-cover"
+                      className="object-contain" 
                       priority
                       sizes="100vw"
                     />
@@ -379,7 +342,7 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
 
               {/* Price and Stock - BELOW THE NAME */}
               <div className="space-y-1">
-                <span className="text-xl sm:text-2xl font-bold text-gray-900">
+                <span className="text-xl sm:text-2xl font-bold text-amber-800">
                   ₹{product.price.toLocaleString('en-IN')}
                 </span>
                 <div>
@@ -389,35 +352,18 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
                 </div>
               </div>
 
-              {/* Color Selection - COMPACT */}
-              {productHasColors && validColors.length > 0 && (
-                <div className="pt-1">
-                  <h3 className="text-sm font-medium text-gray-900 mb-2">Colors</h3>
-                  <div className="flex flex-wrap gap-1">
-                    {validColors.map((colorItem, index) => (
-                      <ColorCircle
-                        key={index}
-                        colorItem={colorItem}
-                        isSelected={selectedColor?.name === colorItem.name}
-                        onClick={() => setSelectedColor(colorItem)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Add to Cart - COMPACT */}
               <div className="pt-2">
                 <div className="max-w-sm">
                   {/* Desktop Add to Cart Button */}
                   <div className="hidden lg:block">
-                    <AddToCartButton product={product} selectedColor={selectedColor} />
+                    <AddToCartButton product={product} />
                   </div>
                   
                   {/* Mobile Add to Cart Button */}
                   <div className="lg:hidden">
                     <div className="space-y-2">
-                      <AddToCartButton product={product} selectedColor={selectedColor} />
+                      <AddToCartButton product={product} />
                       
                       {/* Mobile Buy Now Button */}
                       <button
@@ -428,7 +374,7 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
                           transition-colors duration-200 flex items-center justify-center gap-1.5
                           ${stock <= 0 
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                            : 'bg-black text-white hover:bg-gray-800'
+                            : 'bg-amber-900 text-white hover:bg-amber-800'
                           }
                         `}
                       >
@@ -447,23 +393,45 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
                 {/* Description */}
                 <div>
                   <h3 className="text-sm font-medium text-gray-900 mb-1">Description</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">{product.description}</p>
+                  <p className="text-gray-700 text-sm leading-relaxed">{product.description}</p>
                 </div>
 
-                {/* Specifications */}
-                {product.specifications && product.specifications.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900 mb-1">Specs</h3>
-                    <div className="space-y-1">
-                      {product.specifications.slice(0, 3).map((spec, index) => (
-                        <div key={index} className="flex text-sm">
-                          <span className="font-medium text-gray-700 w-1/3">{spec.key}:</span>
-                          <span className="text-gray-600 w-2/3">{spec.value}</span>
+                {/* Specifications - Grouped by category */}
+                {specGroups.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-medium text-gray-900">Specifications</h3>
+                    {specGroups.map(([category, specs], groupIndex) => (
+                      <div key={groupIndex} className="space-y-1">
+                        <h4 className="text-xs font-semibold text-amber-700 uppercase tracking-wide">{category}</h4>
+                        <div className="space-y-1">
+                          {specs.map((spec, index) => (
+                            <div key={index} className="flex text-sm">
+                              <span className="font-medium text-gray-700 w-2/5">{spec.key}:</span>
+                              <span className="text-gray-600 w-3/5">{spec.value}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 )}
+
+                {/* Additional Product Info */}
+                <div className="space-y-2 pt-2 border-t border-amber-100">
+                  {product.category && (
+                    <div className="flex text-sm">
+                      <span className="font-medium text-amber-800 w-2/5">Category:</span>
+                      <span className="text-amber-900 w-3/5">{typeof product.category === 'object' ? product.category.name : 'Unknown'}</span>
+                    </div>
+                  )}
+                  
+                  {product.seller && (
+                    <div className="flex text-sm">
+                      <span className="font-medium text-amber-800 w-2/5">Seller:</span>
+                      <span className="text-amber-900 w-3/5">{product.seller}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -471,8 +439,8 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
 
         {/* Related Products - TIGHT */}
         {randomProducts.length > 0 && (
-          <div className="p-3 sm:p-4 mt-2 border-t border-gray-100">
-            <h2 className="text-base font-bold text-gray-900 mb-2">Related Products</h2>
+          <div className="p-3 sm:p-4 mt-2 border-t border-amber-100">
+            <h2 className="text-base font-bold text-amber-800 mb-2">Related Products</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {randomProducts.map((relatedProduct) => (
                 <div key={relatedProduct._id} className="scale-95">
@@ -488,7 +456,6 @@ export default function ProductDetailPage(props: ProductDetailPageProps) {
       {product && (
         <MobileFloatingButton 
           product={product} 
-          selectedColor={selectedColor} 
           isVisible={showFloatingButton}
           onAddToCart={handleMobileAddToCart}
         />
